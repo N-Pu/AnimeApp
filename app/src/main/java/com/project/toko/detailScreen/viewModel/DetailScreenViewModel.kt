@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.concurrent.thread
 
 @HiltViewModel
 class DetailScreenViewModel @Inject constructor(

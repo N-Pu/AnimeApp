@@ -12,23 +12,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.project.toko.core.dao.MainDb
-import com.project.toko.core.di.Application
-import com.project.toko.core.repository.MalApiService
 import com.project.toko.core.presentation_layer.appConstraction.AppActivator
 import com.project.toko.core.presentation_layer.theme.SplashTheme
 import com.project.toko.core.presentation_layer.theme.Theme
 import com.project.toko.core.settings.SaveDarkMode
-import com.project.toko.homeScreen.viewModel.HomeScreenViewModel
 import com.project.toko.splashScreen.AnimatedSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
