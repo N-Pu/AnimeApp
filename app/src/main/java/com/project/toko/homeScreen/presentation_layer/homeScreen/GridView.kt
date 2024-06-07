@@ -1,6 +1,5 @@
 package com.project.toko.homeScreen.presentation_layer.homeScreen
 
-import android.media.effect.Effect
 import com.project.toko.homeScreen.viewModel.HomeScreenViewModel
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -40,7 +39,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -67,13 +66,13 @@ import java.util.Locale
 @Composable
 fun GridAdder(
     navController: NavHostController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
     switch: () -> Boolean,
     isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader,
 ) {
-    val viewModel = viewModelProvider[HomeScreenViewModel::class.java]
+    val viewModel : HomeScreenViewModel = hiltViewModel()
+
     val newAnimeSearchModel by viewModel.animeSearch.collectAsStateWithLifecycle()
     val getTrendingAnime by viewModel.topTrendingAnime.collectAsStateWithLifecycle()
     val getTopUpcoming by viewModel.topUpcomingAnime.collectAsStateWithLifecycle()
@@ -82,14 +81,13 @@ fun GridAdder(
     if (switch()) {
         if (viewModel.isLoadingSearch.value.not()) {
             SearchScreen(
-                viewModel, newAnimeSearchModel, navController, viewModelProvider, svgImageLoader
+                viewModel, newAnimeSearchModel, navController, svgImageLoader
             )
         } else {
             LoadingAnimation()
         }
     } else {
         ShowMainScreen(
-            viewModelProvider = viewModelProvider,
             isInDarkTheme = isInDarkTheme,
             navController = navController,
             svgImageLoader = svgImageLoader,
@@ -121,7 +119,6 @@ fun GridAdder(
                     }
                 },
                 modifier = modifier,
-                viewModelProvider = viewModelProvider,
                 isInDarkTheme = isInDarkTheme,
                 svgImageLoader = svgImageLoader
             )
@@ -135,7 +132,6 @@ fun SearchScreen(
     viewModel: HomeScreenViewModel,
     newAnimeSearchModel: NewAnimeSearchModel,
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
     svgImageLoader: ImageLoader
 ) {
     var additionalDataRequested by remember { mutableStateOf(false) }
@@ -167,7 +163,6 @@ fun SearchScreen(
                     AnimeCardBox(
                         data = data,
                         navController = navController,
-                        viewModelProvider = viewModelProvider,
                         modifier = cardModifier,
                         svgImageLoader = svgImageLoader,
                         homeScreenViewModel = viewModel
@@ -185,7 +180,6 @@ fun ShowMainScreen(
     modifier: Modifier = Modifier,
     isInDarkTheme: () -> Boolean,
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
     svgImageLoader: ImageLoader,
     getTrendingAnime: NewAnimeSearchModel,
     getTopUpcoming: NewAnimeSearchModel,
@@ -193,7 +187,7 @@ fun ShowMainScreen(
 ) {
 
     val scroll = rememberScrollState()
-    val viewModel = viewModelProvider[HomeScreenViewModel::class.java]
+    val viewModel : HomeScreenViewModel = hiltViewModel()
     val loadingSectionTopAiring by viewModel.loadingSectionTopAiring
     val loadingSectionTopUpcoming by viewModel.loadingSectionTopUpcoming
     val loadingSectionTopTrending by viewModel.loadingSectionTopTrending
@@ -227,7 +221,6 @@ fun ShowMainScreen(
                     Spacer(modifier = modifier.width(20.dp))
                     ShowSection(
                         data = data, navController = navController,
-                        viewModelProvider = viewModelProvider,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -256,7 +249,6 @@ fun ShowMainScreen(
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
                         data = data, navController = navController,
-                        viewModelProvider = viewModelProvider,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -300,7 +292,6 @@ fun ShowMainScreen(
                     Spacer(modifier = modifier.width(20.dp))
                     ShowSection(
                         data = data, navController = navController,
-                        viewModelProvider = viewModelProvider,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -329,7 +320,6 @@ fun ShowMainScreen(
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
                         data = data, navController = navController,
-                        viewModelProvider = viewModelProvider,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -378,7 +368,6 @@ fun ShowMainScreen(
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
                         data = data, navController = navController,
-                        viewModelProvider = viewModelProvider,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -418,7 +407,6 @@ fun ShowMainScreen(
 private fun AnimeCardBox(
     data: AnimeSearchData,
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
     svgImageLoader: ImageLoader,
     homeScreenViewModel: HomeScreenViewModel
@@ -459,11 +447,11 @@ private fun AnimeCardBox(
 
             }) {
                 navigateToDetailScreen {
-                        navController.navigate(route = "detail_screen/${data.mal_id}")
-                        {
-                            launchSingleTop = true
-                        }
+                    navController.navigate(route = "detail_screen/${data.mal_id}")
+                    {
+                        launchSingleTop = true
                     }
+                }
 
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiaryContainer),
@@ -530,7 +518,6 @@ private fun AnimeCardBox(
                 scoredBy = formatScoredBy(data.scored_by),
                 animeImage = data.images.jpg.image_url,
                 modifier = Modifier,
-                viewModelProvider = viewModelProvider,
                 status = data.status,
                 rating = data.rating ?: "N/A",
                 secondName = data.title_japanese,
@@ -632,14 +619,13 @@ private fun formatScore(float: Float?): String {
 private fun ShowSection(
     data: AnimeItem,
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
     svgImageLoader: ImageLoader
 ) {
     val painter = rememberAsyncImagePainter(model = data.animeImage)
     var isCardClicked by remember { mutableStateOf(false) }
 
-    val homeScreenViewModel = viewModelProvider[HomeScreenViewModel::class.java]
+    val homeScreenViewModel :HomeScreenViewModel = hiltViewModel()
     val value by rememberInfiniteTransition(label = "").animateFloat(
         initialValue = if (isCardClicked) 0.99f else 1f, // Изменяем значение в зависимости от нажатия на Card
         targetValue = if (isCardClicked) 1f else 0.99f, // Изменяем значение в зависимости от нажатия на Card
@@ -672,12 +658,12 @@ private fun ShowSection(
                 }
 
             }) {
-                    navigateToDetailScreen {
-                        navController.navigate(route = "detail_screen/${data.id}")
-                        {
-                            launchSingleTop = true
-                        }
+                navigateToDetailScreen {
+                    navController.navigate(route = "detail_screen/${data.id}")
+                    {
+                        launchSingleTop = true
                     }
+                }
 
 
             },
@@ -831,14 +817,13 @@ private fun ShowSectionName(sectionName: String, modifier: Modifier, isInDarkThe
 private fun ShowTopAnime(
     data: AnimeSearchData,
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
     svgImageLoader: ImageLoader
 ) {
     val painter = rememberAsyncImagePainter(model = data.images.webp.image_url)
     var isCardClicked by remember { mutableStateOf(false) }
 
-    val homeScreenViewModel = viewModelProvider[HomeScreenViewModel::class.java]
+    val homeScreenViewModel : HomeScreenViewModel = hiltViewModel()
     val value by rememberInfiniteTransition(label = "").animateFloat(
         initialValue = if (isCardClicked) 0.99f else 1f, // Изменяем значение в зависимости от нажатия на Card
         targetValue = if (isCardClicked) 1f else 0.99f, // Изменяем значение в зависимости от нажатия на Card
@@ -951,7 +936,6 @@ private fun ShowTopAnime(
                     scoredBy = formatScoredBy(data.scored_by),
                     animeImage = data.images.jpg.image_url,
                     modifier = modifier,
-                    viewModelProvider = viewModelProvider,
                     status = data.status,
                     rating = data.rating ?: "N/A",
                     secondName = data.title_japanese,

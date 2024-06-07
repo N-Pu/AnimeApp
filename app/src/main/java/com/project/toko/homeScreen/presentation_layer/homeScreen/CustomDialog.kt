@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.PopupProperties
-import androidx.lifecycle.ViewModelProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -75,7 +75,6 @@ fun CustomDialog(
     data: com.project.toko.homeScreen.model.newAnimeSearchModel.AnimeSearchData,
     navController: NavController,
     modifier: Modifier,
-    viewModelProvider: ViewModelProvider,
     isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader
 ) {
@@ -184,7 +183,6 @@ fun CustomDialog(
                         AddToDataBaseRow(
                             modifier = modifier,
                             data = data,
-                            viewModelProvider = viewModelProvider,
                             isInDarkTheme = isInDarkTheme,
                             svgImageLoader = svgImageLoader
                         )
@@ -463,10 +461,10 @@ private fun EpisodesLabel(episodes: Int, modifier: Modifier) {
 private fun AddToDataBaseRow(
     modifier: Modifier,
     data: com.project.toko.homeScreen.model.newAnimeSearchModel.AnimeSearchData,
-    viewModelProvider: ViewModelProvider, isInDarkTheme:() ->  Boolean,
+    isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader
 ) {
-    val daoViewModel = viewModelProvider[DaoViewModel::class.java]
+    val daoViewModel :DaoViewModel = hiltViewModel()
     var isExpanded by remember { mutableStateOf(false) }
 
     val threeDots = if (isInDarkTheme()) {
@@ -779,7 +777,9 @@ private fun AddToDataBaseRow(
             verticalArrangement = Arrangement.Center,
             modifier = modifier
                 .weight(2.5f)
-                .fillMaxWidth().fillMaxHeight().padding(horizontal = 5.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(horizontal = 5.dp)
                 .clip(CardDefaults.shape)
                 .background(
                     if (daoViewModel
@@ -845,8 +845,10 @@ private fun AddToDataBaseRow(
                     }
                 }
         ) {
-            AutoResizedText(    text = "In the plans",
-                color = MaterialTheme.colorScheme.primary)
+            AutoResizedText(
+                text = "In the plans",
+                color = MaterialTheme.colorScheme.primary
+            )
 //            Text(
 //                text = "In the plans",
 //                color = MaterialTheme.colorScheme.primary,

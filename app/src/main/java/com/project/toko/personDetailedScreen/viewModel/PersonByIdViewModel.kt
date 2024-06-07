@@ -11,6 +11,7 @@ import com.project.toko.personDetailedScreen.model.personFullModel.Data
 import com.project.toko.core.repository.MalApiService
 import com.project.toko.core.utils.connectionCheck.isInternetAvailable
 import com.project.toko.personDetailedScreen.model.personPictures.PersonPicturesData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +19,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PersonByIdViewModel @Inject constructor(malApiService: MalApiService) : ViewModel() {
-    private val animeRepository = malApiService
+@HiltViewModel
+class PersonByIdViewModel @Inject constructor(val malApiService: MalApiService) : ViewModel() {
     private val _personFull = MutableStateFlow<Data?>(null)
     private val personCache = mutableMapOf<Int, Data?>()
     val personFull = _personFull.asStateFlow()
@@ -28,10 +29,10 @@ class PersonByIdViewModel @Inject constructor(malApiService: MalApiService) : Vi
     private val _loadedId = mutableIntStateOf(0)
     val loadedId = _loadedId
 
-  private suspend fun getPersonFromId(mal_id: Int) {
+    private suspend fun getPersonFromId(mal_id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = animeRepository.getPersonFullFromId(mal_id)
+                val response = malApiService.getPersonFullFromId(mal_id)
                 if (response.isSuccessful) {
                     val data = response.body()?.data
                     personCache[mal_id] = data
@@ -43,6 +44,7 @@ class PersonByIdViewModel @Inject constructor(malApiService: MalApiService) : Vi
             }
         }
     }
+
     //character album
     private val picturesCache =
         mutableMapOf<Int, List<PersonPicturesData>>()
@@ -52,10 +54,10 @@ class PersonByIdViewModel @Inject constructor(malApiService: MalApiService) : Vi
         )
     val picturesList = _picturesList.asStateFlow()
 
-    private  suspend fun getPicturesFromId(id: Int) {
+    private suspend fun getPicturesFromId(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = animeRepository.getPersonFullPictures(id)
+                val response = malApiService.getPersonFullPictures(id)
                 if (response.isSuccessful) {
                     val pictures = response.body()?.data ?: emptyList()
                     picturesCache[id] = pictures

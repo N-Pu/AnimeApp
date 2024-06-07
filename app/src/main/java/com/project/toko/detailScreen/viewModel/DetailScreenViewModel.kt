@@ -19,6 +19,7 @@ import com.project.toko.detailScreen.model.pictureModel.DetailPicturesData
 import com.project.toko.detailScreen.model.recommendationsModel.RecommendationsData
 import com.project.toko.detailScreen.model.staffModel.StaffData
 import com.project.toko.detailScreen.model.staffModel.StaffModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +28,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.concurrent.thread
 
+@HiltViewModel
 class DetailScreenViewModel @Inject constructor(
     private val malApiService: MalApiService
 ) : ViewModel() {

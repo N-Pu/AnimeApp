@@ -60,7 +60,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ComponentActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -84,7 +84,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppActivator(
     navController: NavHostController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
     componentActivity: ComponentActivity,
     onThemeChange: () -> Unit,
@@ -98,7 +97,6 @@ fun AppActivator(
             ShowDrawerContent(
                 modifier = modifier,
                 imageLoader = svgImageLoader,
-                viewModelProvider = viewModelProvider,
                 componentActivity = componentActivity,
                 onThemeChange = onThemeChange,
                 darkTheme = isInDarkTheme,
@@ -111,14 +109,12 @@ fun AppActivator(
                 navController = navController,
                 modifier = modifier,
                 imageLoader = svgImageLoader,
-                viewModelProvider = viewModelProvider
             )
         },
             content = { padding ->
                 padding.calculateTopPadding()
                 SetupNavGraph(
                     navController = navController,
-                    viewModelProvider = viewModelProvider,
                     modifier = modifier,
                     isInDarkTheme = isInDarkTheme,
                     drawerState = drawerState,
@@ -135,15 +131,15 @@ private fun BottomNavigationBar(
     navController: NavController,
     modifier: Modifier,
     imageLoader: ImageLoader,
-    viewModelProvider: ViewModelProvider
 ) {
-    var currentDetailScreenId by viewModelProvider[DetailScreenViewModel::class.java].loadedId
+    var currentDetailScreenId by hiltViewModel<DetailScreenViewModel>().loadedId
+    var characterDetailScreenId by hiltViewModel<CharacterFullByIdViewModel>().loadedId
+    var personDetailScreenId by hiltViewModel<PersonByIdViewModel>().loadedId
     var lastSelectedScreen by remember { mutableStateOf<String?>(null) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     var detailScreenButtonIsSelected by remember { mutableStateOf(false) }
-    val characterDetailScreenId by viewModelProvider[CharacterFullByIdViewModel::class.java].loadedId
-    val personDetailScreenId by viewModelProvider[PersonByIdViewModel::class.java].loadedId
+
 
 
 
@@ -410,19 +406,19 @@ private fun BottomNavigationBar(
 private fun ShowDrawerContent(
     modifier: Modifier,
     imageLoader: ImageLoader,
-    viewModelProvider: ViewModelProvider,
     componentActivity: ComponentActivity,
     onThemeChange: () -> Unit,
     darkTheme: () -> Boolean,
     svgImageLoader: ImageLoader
 ) {
-    val homeScreenViewModel = viewModelProvider[HomeScreenViewModel::class.java]
-    val daoViewModel = viewModelProvider[DaoViewModel::class.java]
+    val homeScreenViewModel : HomeScreenViewModel = hiltViewModel()
+    val daoViewModel : DaoViewModel = hiltViewModel()
+    val randomScreenViewModel : RandomAnimeViewModel = hiltViewModel()
+
     var isHelpFAQOpen by remember { mutableStateOf(false) }
     var isLegalOpen by remember { mutableStateOf(false) }
     var isDeleteDaoOpen by remember { mutableStateOf(false) }
     val isExportDataPopUpDialogOpen = remember { mutableStateOf(false) }
-    val randomScreenViewModel = viewModelProvider[RandomAnimeViewModel::class.java]
     val context = LocalContext.current
 
     val customModifier =

@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -53,10 +53,10 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
 @Composable
 fun ShowRandomAnime(
-    navController: NavController, modifier: Modifier, viewModelProvider: ViewModelProvider
+    navController: NavController, modifier: Modifier
 ) {
-    val randomViewModel = viewModelProvider[RandomAnimeViewModel::class.java]
-    val daoViewModel = viewModelProvider[DaoViewModel::class.java]
+    val randomViewModel : RandomAnimeViewModel = hiltViewModel()
+    val daoViewModel :DaoViewModel = hiltViewModel()
     val data by randomViewModel.animeDetails.collectAsStateWithLifecycle()
     var cardIsShown by randomViewModel.cardIsShown
     val context = LocalContext.current
@@ -86,6 +86,7 @@ fun ShowRandomAnime(
                                         cardIsShown = false
                                     }
                                 }
+
                                 Direction.Right -> {
                                     randomViewModel.viewModelScope.launch(Dispatchers.IO) {
                                         daoViewModel.addToCategory(
@@ -112,6 +113,7 @@ fun ShowRandomAnime(
                                         cardIsShown = false
                                     }
                                 }
+
                                 Direction.Up -> {
                                     navigateToDetailScreen {
                                         navController.navigate(route = "detail_screen/${data?.mal_id ?: 0}")
@@ -121,6 +123,7 @@ fun ShowRandomAnime(
                                     }
 
                                 }
+
                                 else -> {}
                             }
                         },

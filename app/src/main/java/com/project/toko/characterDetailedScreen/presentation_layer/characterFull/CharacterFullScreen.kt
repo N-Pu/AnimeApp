@@ -15,7 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -41,11 +41,11 @@ import kotlinx.coroutines.withContext
 fun DisplayCharacterFromId(
     id: Int,
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
+
     modifier: Modifier, isInDarkTheme: () -> Boolean, svgImageLoader: ImageLoader
 ) {
-    val characterViewModel = viewModelProvider[CharacterFullByIdViewModel::class.java]
-    val daoViewModel = viewModelProvider[DaoViewModel::class.java]
+    val characterViewModel :CharacterFullByIdViewModel = hiltViewModel()
+    val daoViewModel :DaoViewModel = hiltViewModel()
     val context = LocalContext.current
     LaunchedEffect(id) {
         withContext(Dispatchers.IO) {

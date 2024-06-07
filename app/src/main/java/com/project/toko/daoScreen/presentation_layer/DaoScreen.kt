@@ -64,7 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.ViewModelProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -94,14 +94,10 @@ import kotlinx.coroutines.launch
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 
-//class DaoScreen
-
-//@Inject lateinit var svgImageLoader : ImageLoader
 
 @Composable
 fun DaoScreen(
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,
@@ -111,7 +107,7 @@ fun DaoScreen(
 
     var selectedListType by rememberSaveable { mutableStateOf(AnimeStatus.WATCHING) }
     val arrayOfEntries = AnimeStatus.values()
-    val viewModel = viewModelProvider[DaoViewModel::class.java]
+    val viewModel : DaoViewModel = hiltViewModel()
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val rightSortingMenu = remember { mutableStateOf(false) }
     val leftSortingMenu = remember { mutableStateOf(false) }
@@ -315,7 +311,6 @@ fun DaoScreen(
 
                 AnimeStatus.PERSON -> ShowPerson(
                     navController = navController,
-                    viewModelProvider = viewModelProvider,
                     modifier = modifier
                 )
 
@@ -835,11 +830,10 @@ private fun CharacterCardBox(
 @Composable
 private fun ShowPerson(
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier
 ) {
 
-    val daoViewModel = viewModelProvider[DaoViewModel::class.java]
+    val daoViewModel : DaoViewModel = hiltViewModel()
     val personList by daoViewModel.getAllPeople()
         .collectAsStateWithLifecycle(initialValue = emptyList())
 

@@ -6,12 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.project.toko.core.repository.MalApiService
 import com.project.toko.homeScreen.model.newAnimeSearchModel.AnimeSearchData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class RandomAnimeViewModel @Inject constructor(private val malApiService: MalApiService) :
     ViewModel() {
     private var isSearching = false
