@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -64,13 +65,12 @@ import kotlinx.coroutines.withContext
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,
     svgImageLoader: ImageLoader
 ) {
-    val viewModel = viewModelProvider[HomeScreenViewModel::class.java]
+    val viewModel : HomeScreenViewModel = hiltViewModel()
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val switchIndicator = remember { viewModel.switchIndicator }
     val scope = rememberCoroutineScope()
@@ -219,7 +219,6 @@ fun MainScreen(
 
             GridAdder(
                 navController = navController,
-                viewModelProvider = viewModelProvider,
                 modifier = modifier,
                 switch = { switchIndicator.value },
                 isInDarkTheme = isInDarkTheme,

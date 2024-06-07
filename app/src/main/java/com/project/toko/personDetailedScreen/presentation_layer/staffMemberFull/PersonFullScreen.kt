@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -47,11 +48,11 @@ import kotlinx.coroutines.withContext
 fun DisplayPersonFullScreen(
     id: Int,
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
+
     modifier: Modifier, isInDarkTheme: () -> Boolean, svgImageLoader: ImageLoader
 ) {
-    val personViewModel = viewModelProvider[PersonByIdViewModel::class.java]
-    val daoViewModel = viewModelProvider[DaoViewModel::class.java]
+    val personViewModel : PersonByIdViewModel = hiltViewModel()
+    val daoViewModel : DaoViewModel = hiltViewModel()
     val context = LocalContext.current
     LaunchedEffect(id) {
         withContext(Dispatchers.IO) {

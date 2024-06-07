@@ -1,8 +1,8 @@
 
 plugins {
     id 'com.android.application'
+    id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.android'
-//    id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
 }
 
@@ -62,7 +62,9 @@ android {
 //        resources.excludes.add("META-INF/*")
     }
 }
-
+kapt {
+    correctErrorTypes true
+}
 dependencies {
 
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
@@ -73,7 +75,7 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
 
 //    implementation "androidx.compose.material:material:1.5.4"
-    implementation "androidx.compose.material3:material3:1.1.2"
+    implementation "androidx.compose.material3:material3:1.2.1"
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation "androidx.compose.ui:ui-graphics:1.6.0"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -84,7 +86,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     //noinspection GradleDependency
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    androidTestImplementation platform('androidx.compose:compose-bom:2024.01.00')
+    androidTestImplementation platform('androidx.compose:compose-bom:2024.05.00')
     //noinspection GradleDependency
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     //noinspection GradleDependency
@@ -95,11 +97,6 @@ dependencies {
 //    retrofit Gson
     def retrofit_gson_version = '2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:' + retrofit_gson_version
-
-//    def retrofit_moshi_version = '2.9.0'
-//    def kotlin_moshi_version = '1.15.0'
-//    implementation "com.squareup.retrofit2:converter-moshi:" + retrofit_moshi_version
-//    implementation "com.squareup.moshi:moshi-kotlin:" + kotlin_moshi_version
 
     def http_version = '4.10.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:' + http_version
@@ -123,8 +120,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
 
     //COIL (image loader)
-    implementation 'io.coil-kt:coil-compose:2.5.0'
-    implementation 'io.coil-kt:coil-svg:2.5.0'
+    implementation 'io.coil-kt:coil-compose:2.6.0'
+    implementation 'io.coil-kt:coil-svg:2.6.0'
 
 
 
@@ -152,16 +149,15 @@ dependencies {
 
 
     // dagger
-    def dagger_version = '2.47'
-    implementation 'com.google.dagger:dagger:' + dagger_version
-    kapt 'com.google.dagger:dagger-compiler:' + dagger_version
+//    def dagger_version = '2.47'
+//    implementation 'com.google.dagger:dagger:' + dagger_version
+//    kapt 'com.google.dagger:dagger-compiler:' + dagger_version
 
     // dagger-hilt
-//    implementation 'com.google.dagger:hilt-android:2.47'
-//    kapt 'com.google.dagger:hilt-android-compiler:2.47'
-//    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
-//    kapt "androidx.hilt:hilt-compiler:1.0.0"
-//    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+    def dagger_hilt_version = '2.51.1'
+    implementation 'com.google.dagger:hilt-android:' + dagger_hilt_version
+    kapt 'com.google.dagger:hilt-android-compiler:' + dagger_hilt_version
+    implementation 'androidx.hilt:hilt-navigation-compose:1.2.0'
 
 
     // status bar colors
@@ -175,8 +171,6 @@ dependencies {
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0'
 
 
-    // cloudy (blur library for all android versions)
-//    implementation "com.github.skydoves:cloudy:0.1.2"
 
 
     //page swiping
@@ -190,22 +184,3 @@ dependencies {
 //    implementation 'com.airbnb.android:lttie:' + lottie_version
 
 }
-
-//subprojects {
-//    tasks.withType(KotlinCompile).configureEach {
-//        kotlinOptions {
-//            if (project.findProperty("AnimeApp.enableComposeCompilerReports") == "true") {
-//                freeCompilerArgs += [
-//                        "-P",
-//                        "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
-//                                project.buildDir.absolutePath + "/compose_metrics"
-//                ]
-//                freeCompilerArgs += [
-//                        "-P",
-//                        "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
-//                                project.buildDir.absolutePath + "/compose_metrics"
-//                ]
-//            }
-//        }
-//    }
-//}

@@ -16,11 +16,11 @@
         tools:ignore="ScopedStorage" />
 
     <application
+        android:name = ".core.di.Application"
         android:versionCode="14"
         android:versionName="1.13"
         android:windowSoftInputMode="adjustResize"
         android:requestLegacyExternalStorage="true"
-        android:name=".core.di.Application"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"

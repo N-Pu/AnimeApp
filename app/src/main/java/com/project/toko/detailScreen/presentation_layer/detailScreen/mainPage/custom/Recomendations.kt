@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -51,11 +52,11 @@ import kotlinx.coroutines.launch
 fun Recommendations(
     recommendationsDataList: List<RecommendationsData>,
     navController: NavController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
-    isInDarkTheme:() ->  Boolean
+    isInDarkTheme: () -> Boolean
 ) {
     if (recommendationsDataList.isNotEmpty()) {
+        val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
         Column(
             modifier = modifier
                 .fillMaxWidth(), horizontalAlignment = Alignment.Start,
@@ -96,7 +97,7 @@ fun Recommendations(
                     SingleRecommendationCard(
                         modifier = modifier,
                         navController = navController,
-                        detailScreenViewModel = viewModelProvider[DetailScreenViewModel::class.java],
+                        detailScreenViewModel = detailScreenViewModel,
                         recommendationsData = recommendationsData,
                         painter = painter
                     )

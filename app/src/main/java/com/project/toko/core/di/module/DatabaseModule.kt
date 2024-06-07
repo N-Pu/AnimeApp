@@ -5,18 +5,20 @@ import androidx.room.Room
 import com.project.toko.core.dao.MainDb
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
-class DatabaseModule(private val context: Context) {
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideMainDb(): MainDb = Room.databaseBuilder(
+    fun provideMainDb(@ApplicationContext context: Context): MainDb = Room.databaseBuilder(
         context.applicationContext,
         MainDb::class.java,
         "Main.db"
     ).fallbackToDestructiveMigration().build()
-
 }

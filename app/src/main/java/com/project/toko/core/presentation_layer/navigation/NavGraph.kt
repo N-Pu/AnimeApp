@@ -4,6 +4,7 @@ package com.project.toko.core.presentation_layer.navigation
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -25,7 +26,6 @@ import com.project.toko.randomAnimeScreen.presentation_layer.randomAnimeScreen.S
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
-    viewModelProvider: ViewModelProvider,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,
@@ -36,7 +36,6 @@ fun SetupNavGraph(
         composable(route = Screen.Home.route) {
             MainScreen(
                 navController = navController,
-                viewModelProvider = viewModelProvider,
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
                 drawerState = drawerState,
@@ -51,7 +50,6 @@ fun SetupNavGraph(
             val id = backStackEntry.arguments!!.getInt("id")
             ActivateDetailScreen(
                 navController = navController,
-                viewModelProvider = viewModelProvider,
                 id = id,
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
@@ -65,7 +63,6 @@ fun SetupNavGraph(
         composable(route = Screen.Favorites.route) {
             DaoScreen(
                 navController = navController,
-                viewModelProvider = viewModelProvider,
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
                 drawerState = drawerState,
@@ -75,23 +72,23 @@ fun SetupNavGraph(
         composable(route = Screen.RandomAnimeOrManga.route) {
             ShowRandomAnime(
                 navController = navController,
-                viewModelProvider = viewModelProvider,
                 modifier = modifier,
             )
         }
         composable(route = Screen.DetailOnWholeCast.route) {
-
+            val detailScreenViewModel : DetailScreenViewModel = hiltViewModel()
             ShowWholeCast(
                 navController,
-                viewModelProvider[DetailScreenViewModel::class.java],
+                detailScreenViewModel,
                 modifier,
                 isInDarkTheme = isInDarkTheme
             )
         }
         composable(route = Screen.DetailOnWholeStaff.route) {
+            val detailScreenViewModel : DetailScreenViewModel = hiltViewModel()
             ShowWholeStaff(
                 navController,
-                viewModelProvider[DetailScreenViewModel::class.java],
+                detailScreenViewModel,
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme
             )
@@ -105,7 +102,6 @@ fun SetupNavGraph(
             DisplayCharacterFromId(
                 id = id,
                 navController = navController,
-                viewModelProvider = viewModelProvider,
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
                 svgImageLoader = svgImageLoader
@@ -120,7 +116,6 @@ fun SetupNavGraph(
             DisplayPersonFullScreen(
                 id = id,
                 navController = navController,
-                viewModelProvider = viewModelProvider,
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
                 svgImageLoader = svgImageLoader

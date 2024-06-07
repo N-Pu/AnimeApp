@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.project.toko.characterDetailedScreen.model.characterFullModel.Data
 import com.project.toko.core.repository.MalApiService
 import com.project.toko.core.utils.connectionCheck.isInternetAvailable
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class CharacterFullByIdViewModel @Inject constructor(private val malApiService: MalApiService) :
     ViewModel() {
     private val charactersCache = mutableMapOf<Int, Data?>()

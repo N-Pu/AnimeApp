@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -64,7 +65,6 @@ fun AddFavorites(
     scoredBy: String,
     animeImage: String,
     modifier: Modifier,
-    viewModelProvider: ViewModelProvider,
     rating: String,
     status: String,
     secondName: String?,
@@ -74,7 +74,7 @@ fun AddFavorites(
 
 ) {
 
-    val daoViewModel = viewModelProvider[DaoViewModel::class.java]
+    val daoViewModel : DaoViewModel = hiltViewModel()
     var isExpanded by remember { mutableStateOf(false) }
     val svgImageLoader = ImageLoader.Builder(LocalContext.current).components {
         add(SvgDecoder.Factory())

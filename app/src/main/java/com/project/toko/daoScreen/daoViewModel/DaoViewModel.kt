@@ -11,6 +11,8 @@ import com.project.toko.core.dao.MainDb
 import com.project.toko.daoScreen.dao.AnimeItem
 import com.project.toko.daoScreen.dao.FavoriteItem
 import com.project.toko.personDetailedScreen.dao.PersonItem
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +27,11 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-
-class DaoViewModel @Inject constructor(private val mainDb: MainDb, private val context: Context) :
+@HiltViewModel
+class DaoViewModel @Inject constructor(
+    private val mainDb: MainDb,
+    @ApplicationContext private val context: Context
+) :
     ViewModel() {
     private val _searchText = MutableStateFlow<String?>(null)
     val searchText = _searchText.asStateFlow()
@@ -369,7 +374,7 @@ class DaoViewModel @Inject constructor(private val mainDb: MainDb, private val c
             viewModelScope.launch(Dispatchers.IO) {
                 mainDb.getDao().deleteAnimeByCategory(category)
             }
-            viewModelScope.launch{
+            viewModelScope.launch {
                 Toast.makeText(
                     context,
                     "All anime were deleted from $category!",
@@ -393,7 +398,7 @@ class DaoViewModel @Inject constructor(private val mainDb: MainDb, private val c
             viewModelScope.launch(Dispatchers.IO) {
                 mainDb.getDao().deleteAllCharacters()
             }
-            viewModelScope.launch{
+            viewModelScope.launch {
                 Toast.makeText(
                     context,
                     "All characters were deleted!",
@@ -417,7 +422,7 @@ class DaoViewModel @Inject constructor(private val mainDb: MainDb, private val c
             viewModelScope.launch(Dispatchers.IO) {
                 mainDb.getDao().deleteAllPeople()
             }
-            viewModelScope.launch{
+            viewModelScope.launch {
                 Toast.makeText(
                     context,
                     "All people were deleted!",
@@ -442,7 +447,7 @@ class DaoViewModel @Inject constructor(private val mainDb: MainDb, private val c
                 mainDb.getDao().deleteAllFavorite()
 
             }
-            viewModelScope.launch{
+            viewModelScope.launch {
                 Toast.makeText(
                     context,
                     "All anime were deleted from Favorite!",
@@ -459,7 +464,6 @@ class DaoViewModel @Inject constructor(private val mainDb: MainDb, private val c
             }
         }
     }
-
 
 
     fun exportDB(DATABASE_NAME: String, packageName: String) {

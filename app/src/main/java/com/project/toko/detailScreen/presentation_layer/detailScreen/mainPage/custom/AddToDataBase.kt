@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -48,10 +49,10 @@ import java.util.Locale
 
 @Composable
 fun AddToFavorites(
-    viewModelProvider: ViewModelProvider, modifier: Modifier, isDarkTheme: () -> Boolean, svgImageLoader : ImageLoader
+    modifier: Modifier, isDarkTheme: () -> Boolean, svgImageLoader: ImageLoader
 ) {
-    val detailScreenViewModel = viewModelProvider[DetailScreenViewModel::class.java]
-    val daoViewModel = viewModelProvider[DaoViewModel::class.java]
+    val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
+    val daoViewModel: DaoViewModel = hiltViewModel()
     val detailScreenState by detailScreenViewModel.animeDetails.collectAsStateWithLifecycle()
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -66,7 +67,7 @@ fun AddToFavorites(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        IconButton(modifier = modifier.weight(1f),onClick = {
+        IconButton(modifier = modifier.weight(1f), onClick = {
             detailScreenViewModel.viewModelScope.launch {
                 if (daoViewModel.containsInFavorite(
                         detailScreenState?.mal_id ?: 0
@@ -113,8 +114,7 @@ fun AddToFavorites(
                             id = detailScreenState?.mal_id ?: 0
                         ).collectAsStateWithLifecycle(initialValue = false).value
                     ) R.drawable.favorite_touched else
-                        R.drawable.favorite_untouched
-                    , imageLoader = svgImageLoader
+                        R.drawable.favorite_untouched, imageLoader = svgImageLoader
                 ),
                 contentDescription = null,
                 colorFilter = if (daoViewModel.containsInFavorite(
@@ -125,7 +125,7 @@ fun AddToFavorites(
                 )
             )
         }
-        IconButton(modifier = modifier.weight(1f),onClick = {
+        IconButton(modifier = modifier.weight(1f), onClick = {
             detailScreenViewModel.viewModelScope.launch {
                 if (daoViewModel.containsItemIdInCategory(
                         detailScreenState?.mal_id ?: 0,
@@ -188,7 +188,7 @@ fun AddToFavorites(
             )
         }
         if (detailScreenState?.url?.isNotEmpty() == true) {
-            IconButton(modifier = modifier.weight(1f),onClick = {
+            IconButton(modifier = modifier.weight(1f), onClick = {
             }) {
                 Image(
                     painter = rememberAsyncImagePainter(

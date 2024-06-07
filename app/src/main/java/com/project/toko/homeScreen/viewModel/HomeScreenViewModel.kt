@@ -25,6 +25,8 @@ import com.project.toko.homeScreen.model.linkChangerModel.getTypes
 import com.project.toko.homeScreen.model.newAnimeSearchModel.Items
 import com.project.toko.homeScreen.model.newAnimeSearchModel.NewAnimeSearchModel
 import com.project.toko.homeScreen.model.newAnimeSearchModel.Pagination
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
@@ -34,12 +36,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
+@HiltViewModel
 @OptIn(FlowPreview::class)
 class HomeScreenViewModel @Inject constructor(
     private val malApiRepository: MalApiService,
     private val dao: MainDb,
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val emptyItem = Items(0, 0, 0)

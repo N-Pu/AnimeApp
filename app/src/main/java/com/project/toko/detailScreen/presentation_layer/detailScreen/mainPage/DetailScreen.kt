@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -58,7 +59,6 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ActivateDetailScreen(
-    viewModelProvider: ViewModelProvider,
     navController: NavController,
     id: Int,
     modifier: Modifier,
@@ -66,7 +66,7 @@ fun ActivateDetailScreen(
     svgImageLoader: ImageLoader
 ) {
 
-    val viewModel = viewModelProvider[DetailScreenViewModel::class.java]
+    val viewModel : DetailScreenViewModel = hiltViewModel()
 
     val detailData by
     viewModel.animeDetails.collectAsStateWithLifecycle()
@@ -185,7 +185,6 @@ fun ActivateDetailScreen(
                         modifier = modifier
                     )
                     AddToFavorites(
-                        viewModelProvider,
                         modifier,
                         isInDarkTheme,
                         svgImageLoader = svgImageLoader
@@ -229,7 +228,6 @@ fun ActivateDetailScreen(
                     Recommendations(
                         recommendationsData,
                         navController,
-                        viewModelProvider,
                         modifier,
                         isInDarkTheme
                     )
