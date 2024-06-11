@@ -1,8 +1,7 @@
-
 plugins {
-    id 'com.android.application'
-    id 'dagger.hilt.android.plugin'
-    id 'org.jetbrains.kotlin.android'
+    alias libs.plugins.androidApplication
+    alias libs.plugins.jetbrainsKotlin
+    alias libs.plugins.daggerHilt
     id 'kotlin-kapt'
 }
 
@@ -59,7 +58,6 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
-//        resources.excludes.add("META-INF/*")
     }
 }
 kapt {
@@ -67,125 +65,71 @@ kapt {
 }
 dependencies {
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
-    implementation 'androidx.activity:activity-compose:1.8.2'
-    //noinspection GradleDependency
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.activity.compose
     implementation "androidx.compose.ui:ui:$compose_version"
-    //noinspection GradleDependency
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-
-//    implementation "androidx.compose.material:material:1.5.4"
-    implementation "androidx.compose.material3:material3:1.1.2"
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation "androidx.compose.ui:ui-graphics:1.6.0"
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    //noinspection GradleDependency
+    implementation libs.androidx.material3
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.ui.graphics
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.appcompat
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    androidTestImplementation platform('androidx.compose:compose-bom:2024.01.00')
-    //noinspection GradleDependency
+    androidTestImplementation platform(libs.androidx.compose.bom)
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    //noinspection GradleDependency
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
-
-    def retrofit_version = '2.9.0'
-    implementation 'com.squareup.retrofit2:retrofit:' + retrofit_version
+    debugImplementation libs.androidx.ui.test.manifest
+    implementation libs.retrofit
 //    retrofit Gson
-    def retrofit_gson_version = '2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:' + retrofit_gson_version
-
-//    def retrofit_moshi_version = '2.9.0'
-//    def kotlin_moshi_version = '1.15.0'
-//    implementation "com.squareup.retrofit2:converter-moshi:" + retrofit_moshi_version
-//    implementation "com.squareup.moshi:moshi-kotlin:" + kotlin_moshi_version
-
-    def http_version = '4.10.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:' + http_version
-
-    def cor_version = '1.6.4'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:' + cor_version
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:' + cor_version
+    implementation libs.converter.gson
+    implementation libs.logging.interceptor
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.core
 
     //ViewModel for Compose
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0"
-
-    // compose paging 3.0
-//    def paging_version = "3.2.0"
-//
-//    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
-//    implementation "androidx.paging:paging-compose:$paging_version"
-
+    implementation libs.androidx.lifecycle.viewmodel.compose
 
     //navigation compose
-    implementation "androidx.navigation:navigation-compose:2.7.6"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
+    implementation libs.androidx.navigation.compose
+    implementation libs.androidx.lifecycle.runtime.compose
 
     //COIL (image loader)
-    implementation 'io.coil-kt:coil-compose:2.5.0'
-    implementation 'io.coil-kt:coil-svg:2.5.0'
-
-
-
-    //ExoPlayer
-//    implementation 'androidx.media3:media3-exoplayer:1.0.0'
-//    implementation 'androidx.media3:media3-exoplayer-dash:1.0.0'
-//    implementation 'androidx.media3:media3-ui:1.0.0'                  // Add this later
-
+    implementation libs.coil.compose
+    implementation libs.coil.svg
 
     // Splash Api
-    implementation 'androidx.core:core-splashscreen:1.0.1'
-
+    implementation libs.androidx.core.splashscreen
 
     //Room
-    def room_version = '2.6.1'
-    implementation 'androidx.room:room-ktx:' + room_version
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.room:room-runtime:' + room_version
-    implementation 'androidx.room:room-paging:' + room_version
-    annotationProcessor "androidx.room:room-compiler:" + room_version
+    implementation libs.androidx.room.ktx
+    implementation libs.androidx.lifecycle.extensions
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.paging
+    annotationProcessor libs.androidx.room.compiler
+    kapt libs.androidx.room.compiler
 
-    kapt 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
-    kapt 'androidx.lifecycle:lifecycle-common:2.7.0'
-    kapt 'androidx.room:room-compiler:' + room_version
-
-
-    // dagger
-//    def dagger_version = '2.47'
-//    implementation 'com.google.dagger:dagger:' + dagger_version
-//    kapt 'com.google.dagger:dagger-compiler:' + dagger_version
+    kapt libs.androidx.lifecycle.viewmodel.compose
+    kapt libs.androidx.lifecycle.common
 
     // dagger-hilt
-    def dagger_hilt_version = '2.51.1'
-    implementation 'com.google.dagger:hilt-android:' + dagger_hilt_version
-    kapt 'com.google.dagger:hilt-android-compiler:' + dagger_hilt_version
-    implementation 'androidx.hilt:hilt-navigation-compose:1.2.0'
-
+    implementation libs.hilt.android
+    kapt libs.hilt.android.compiler
+    implementation libs.androidx.hilt.navigation.compose
 
     // status bar colors
-    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.34.0'
+    implementation libs.accompanist.systemuicontroller
 
     // swipe to refresh
-    implementation 'com.google.accompanist:accompanist-swiperefresh:0.34.0'
-//    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation libs.accompanist.swiperefresh
 
     // youtube
-    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0'
-
-
-
+    implementation libs.androidyoutubeplayer.core
 
     //page swiping
-    implementation 'com.alexstyl.swipeablecard:swipeablecard:0.1.0'
+    implementation libs.swipeablecard
 
     //swiping in dao screen
-    implementation 'me.saket.swipe:swipe:1.3.0'
-
-    //lottie animations
-//    def lottie_version = '6.2.0'
-//    implementation 'com.airbnb.android:lttie:' + lottie_version
-
+    implementation libs.swipe
 }
