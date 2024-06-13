@@ -25,15 +25,20 @@ import com.project.toko.characterDetailedScreen.model.characterFullModel.Voice
 import com.project.toko.core.presentation_layer.theme.evolventaBoldFamily
 
 @Composable
-fun ShowVoiceActors(modifier: Modifier, actors: List<Voice>, navController: NavController) {
+fun ShowVoiceActors(modifier: Modifier, actors: List<Voice>, onNavigateToStaff: (String) -> Unit) {
 
     Row(modifier = modifier.padding(start = 20.dp)) {
-        Text(text = "Voice Actors", fontSize = 24.sp,
+        Text(
+            text = "Voice Actors", fontSize = 24.sp,
             color = MaterialTheme.colorScheme.onPrimary,
             fontFamily = evolventaBoldFamily
         )
     }
-    Spacer(modifier = Modifier.height(20.dp).fillMaxWidth())
+    Spacer(
+        modifier = Modifier
+            .height(20.dp)
+            .fillMaxWidth()
+    )
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -43,22 +48,20 @@ fun ShowVoiceActors(modifier: Modifier, actors: List<Voice>, navController: NavC
             Row(modifier = modifier
                 .clip(CardDefaults.shape)
                 .clickable {
-                    navController.navigate("detail_on_staff/${actors[i].person.mal_id}")
+                    onNavigateToStaff("detail_on_staff/${actors[i].person.mal_id}")
                 }) {
                 Column(
                     modifier = modifier
                         .height(140.dp)
                         .fillMaxWidth(0.28f)
-                        .clip(CardDefaults.shape)
-                    ,
+                        .clip(CardDefaults.shape),
                 ) {
                     Image(
                         painter = rememberAsyncImagePainter(model = actors[i].person.images.jpg.image_url),
                         contentDescription = actors[i].person.name,
                         contentScale = ContentScale.Crop,
                         modifier = modifier
-                            .fillMaxSize()
-                        ,
+                            .fillMaxSize(),
                         alignment = Alignment.Center
                     )
                 }
@@ -68,11 +71,15 @@ fun ShowVoiceActors(modifier: Modifier, actors: List<Voice>, navController: NavC
                         .padding(top = 0.dp, start = 10.dp)
 
                 ) {
-                    Text(text = actors[i].person.name, fontSize = 18.sp,
+                    Text(
+                        text = actors[i].person.name, fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
-                        fontFamily = evolventaBoldFamily)
-                    Text(text = actors[i].language,
-                        color = MaterialTheme.colorScheme.onPrimary)
+                        fontFamily = evolventaBoldFamily
+                    )
+                    Text(
+                        text = actors[i].language,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))

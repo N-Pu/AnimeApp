@@ -65,13 +65,13 @@ import java.util.Locale
 @Stable
 @Composable
 fun GridAdder(
-    navController: NavHostController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier,
     switch: () -> Boolean,
     isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader,
 ) {
-    val viewModel : HomeScreenViewModel = hiltViewModel()
+    val viewModel: HomeScreenViewModel = hiltViewModel()
 
     val newAnimeSearchModel by viewModel.animeSearch.collectAsStateWithLifecycle()
     val getTrendingAnime by viewModel.topTrendingAnime.collectAsStateWithLifecycle()
@@ -81,7 +81,7 @@ fun GridAdder(
     if (switch()) {
         if (viewModel.isLoadingSearch.value.not()) {
             SearchScreen(
-                viewModel, newAnimeSearchModel, navController, svgImageLoader
+                viewModel, newAnimeSearchModel, onNavigateToDetailScreen, svgImageLoader
             )
         } else {
             LoadingAnimation()
@@ -89,7 +89,7 @@ fun GridAdder(
     } else {
         ShowMainScreen(
             isInDarkTheme = isInDarkTheme,
-            navController = navController,
+            onNavigateToDetailScreen = onNavigateToDetailScreen,
             svgImageLoader = svgImageLoader,
             getTopAiring = getTopAiring,
             getTopUpcoming = getTopUpcoming,
@@ -100,19 +100,19 @@ fun GridAdder(
 
     if (viewModel.isDialogShown) {
         val selectedAnime =
-            newAnimeSearchModel.data.find { it.mal_id == viewModel.selectedAnimeId.value }
+            newAnimeSearchModel.data.find { it.id == viewModel.selectedAnimeId.value }
         val selectedTrending =
-            getTrendingAnime.data.find { it.mal_id == viewModel.selectedAnimeId.value }
-        val selectedAiring = getTopAiring.data.find { it.mal_id == viewModel.selectedAnimeId.value }
+            getTrendingAnime.data.find { it.id == viewModel.selectedAnimeId.value }
+        val selectedAiring = getTopAiring.data.find { it.id == viewModel.selectedAnimeId.value }
         val selectedUpcoming =
-            getTopUpcoming.data.find { it.mal_id == viewModel.selectedAnimeId.value }
+            getTopUpcoming.data.find { it.id == viewModel.selectedAnimeId.value }
 
         val selectedData = selectedAnime ?: selectedTrending ?: selectedAiring ?: selectedUpcoming
 
         selectedData?.let { data ->
             CustomDialog(
                 data = data,
-                navController = navController,
+                onNavigateToDetailScreen = onNavigateToDetailScreen,
                 onDismiss = {
                     viewModel.viewModelScope.launch(Dispatchers.IO) {
                         viewModel.onDialogDismiss()
@@ -131,7 +131,7 @@ fun GridAdder(
 fun SearchScreen(
     viewModel: HomeScreenViewModel,
     newAnimeSearchModel: NewAnimeSearchModel,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     svgImageLoader: ImageLoader
 ) {
     var additionalDataRequested by remember { mutableStateOf(false) }
@@ -162,7 +162,7 @@ fun SearchScreen(
                         .padding(vertical = 10.dp) // Add your desired padding here
                     AnimeCardBox(
                         data = data,
-                        navController = navController,
+                        onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier = cardModifier,
                         svgImageLoader = svgImageLoader,
                         homeScreenViewModel = viewModel
@@ -179,7 +179,7 @@ fun SearchScreen(
 fun ShowMainScreen(
     modifier: Modifier = Modifier,
     isInDarkTheme: () -> Boolean,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     svgImageLoader: ImageLoader,
     getTrendingAnime: NewAnimeSearchModel,
     getTopUpcoming: NewAnimeSearchModel,
@@ -187,7 +187,7 @@ fun ShowMainScreen(
 ) {
 
     val scroll = rememberScrollState()
-    val viewModel : HomeScreenViewModel = hiltViewModel()
+    val viewModel: HomeScreenViewModel = hiltViewModel()
     val loadingSectionTopAiring by viewModel.loadingSectionTopAiring
     val loadingSectionTopUpcoming by viewModel.loadingSectionTopUpcoming
     val loadingSectionTopTrending by viewModel.loadingSectionTopTrending
@@ -220,7 +220,7 @@ fun ShowMainScreen(
                 items(lastTenAnimeFromWatchingSection) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowSection(
-                        data = data, navController = navController,
+                        data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -248,7 +248,7 @@ fun ShowMainScreen(
                 items(getTrendingAnime.data) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
-                        data = data, navController = navController,
+                        data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -291,7 +291,7 @@ fun ShowMainScreen(
                 items(getJustTenAddedAnime) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowSection(
-                        data = data, navController = navController,
+                        data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -319,7 +319,7 @@ fun ShowMainScreen(
                 items(getTopAiring.data) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
-                        data = data, navController = navController,
+                        data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -367,7 +367,7 @@ fun ShowMainScreen(
                 items(getTopUpcoming.data) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
-                        data = data, navController = navController,
+                        data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier = modifier,
                         svgImageLoader = svgImageLoader
                     )
@@ -406,7 +406,7 @@ fun ShowMainScreen(
 @Composable
 private fun AnimeCardBox(
     data: AnimeSearchData,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier,
     svgImageLoader: ImageLoader,
     homeScreenViewModel: HomeScreenViewModel
@@ -440,20 +440,12 @@ private fun AnimeCardBox(
             .combinedClickable(onLongClick = {
                 homeScreenViewModel.viewModelScope.launch(Dispatchers.IO) {
                     isCardClicked = true
-                    homeScreenViewModel.onDialogLongClick(data.mal_id)
+                    homeScreenViewModel.onDialogLongClick(data.id)
                     delay(3000L)
                     isCardClicked = false
                 }
 
-            }) {
-                navigateToDetailScreen {
-                    navController.navigate(route = "detail_screen/${data.mal_id}")
-                    {
-                        launchSingleTop = true
-                    }
-                }
-
-            },
+            }) { onNavigateToDetailScreen("detail_screen/${data.id}") },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiaryContainer),
         shape = RectangleShape,
     ) {
@@ -512,7 +504,7 @@ private fun AnimeCardBox(
             }
 
             AddFavorites(
-                mal_id = data.mal_id,
+                mal_id = data.id,
                 title = data.title,
                 score = formatScore(data.score),
                 scoredBy = formatScoredBy(data.scored_by),
@@ -618,14 +610,14 @@ private fun formatScore(float: Float?): String {
 @Composable
 private fun ShowSection(
     data: AnimeItem,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier,
     svgImageLoader: ImageLoader
 ) {
     val painter = rememberAsyncImagePainter(model = data.animeImage)
     var isCardClicked by remember { mutableStateOf(false) }
 
-    val homeScreenViewModel :HomeScreenViewModel = hiltViewModel()
+    val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
     val value by rememberInfiniteTransition(label = "").animateFloat(
         initialValue = if (isCardClicked) 0.99f else 1f, // Изменяем значение в зависимости от нажатия на Card
         targetValue = if (isCardClicked) 1f else 0.99f, // Изменяем значение в зависимости от нажатия на Card
@@ -657,16 +649,7 @@ private fun ShowSection(
                     isCardClicked = false
                 }
 
-            }) {
-                navigateToDetailScreen {
-                    navController.navigate(route = "detail_screen/${data.id}")
-                    {
-                        launchSingleTop = true
-                    }
-                }
-
-
-            },
+            }) { onNavigateToDetailScreen("detail_screen/${data.id}") },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RectangleShape,
     ) {
@@ -816,14 +799,14 @@ private fun ShowSectionName(sectionName: String, modifier: Modifier, isInDarkThe
 @Composable
 private fun ShowTopAnime(
     data: AnimeSearchData,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier,
     svgImageLoader: ImageLoader
 ) {
     val painter = rememberAsyncImagePainter(model = data.images.webp.image_url)
     var isCardClicked by remember { mutableStateOf(false) }
 
-    val homeScreenViewModel : HomeScreenViewModel = hiltViewModel()
+    val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
     val value by rememberInfiniteTransition(label = "").animateFloat(
         initialValue = if (isCardClicked) 0.99f else 1f, // Изменяем значение в зависимости от нажатия на Card
         targetValue = if (isCardClicked) 1f else 0.99f, // Изменяем значение в зависимости от нажатия на Card
@@ -851,18 +834,14 @@ private fun ShowTopAnime(
             .combinedClickable(onLongClick = {
                 homeScreenViewModel.viewModelScope.launch(Dispatchers.IO) {
                     isCardClicked = true
-                    homeScreenViewModel.onDialogLongClick(data.mal_id ?: 0)
+                    homeScreenViewModel.onDialogLongClick(data.id ?: 0)
                     delay(3000L)
                     isCardClicked = false
                 }
 
             }) {
-                navigateToDetailScreen {
-                    navController.navigate(route = "detail_screen/${data.mal_id}")
-                    {
-                        launchSingleTop = true
-                    }
-                }
+                onNavigateToDetailScreen("detail_screen/${data.id}")
+
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RectangleShape,
@@ -930,7 +909,7 @@ private fun ShowTopAnime(
                 }
 
                 AddFavorites(
-                    mal_id = data.mal_id,
+                    mal_id = data.id,
                     title = data.title,
                     score = formatScore(data.score),
                     scoredBy = formatScoredBy(data.scored_by),

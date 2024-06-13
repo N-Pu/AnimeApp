@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Recommendations(
     recommendationsDataList: List<RecommendationsData>,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean
 ) {
@@ -95,7 +95,7 @@ fun Recommendations(
                     Spacer(modifier = modifier.width(20.dp))
                     SingleRecommendationCard(
                         modifier = modifier,
-                        navController = navController,
+                        onNavigateToDetailScreen = onNavigateToDetailScreen,
                         detailScreenViewModel = detailScreenViewModel,
                         recommendationsData = recommendationsData,
                         painter = painter
@@ -113,7 +113,7 @@ fun Recommendations(
 @Composable
 fun SingleRecommendationCard(
     modifier: Modifier,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     detailScreenViewModel: DetailScreenViewModel,
     recommendationsData: RecommendationsData,
     painter: AsyncImagePainter,
@@ -125,13 +125,8 @@ fun SingleRecommendationCard(
             .shadow(20.dp)
             .clip(RoundedCornerShape(16.dp))
             .clickable {
-                detailScreenViewModel.viewModelScope.launch(Dispatchers.Main) {
-                    navigateToDetailScreen {
-                        navController.navigate(route = "detail_screen/${recommendationsData.entry.mal_id}")
-                        {
-                            launchSingleTop = true
-                        }
-                    }
+                detailScreenViewModel.viewModelScope.launch {
+                    onNavigateToDetailScreen("detail_screen/${recommendationsData.entry.id}")
                 }
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiaryContainer),

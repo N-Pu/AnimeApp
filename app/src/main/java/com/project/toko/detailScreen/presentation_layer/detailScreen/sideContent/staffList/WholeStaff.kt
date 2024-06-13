@@ -53,7 +53,11 @@ import com.project.toko.detailScreen.model.staffModel.Person
 
 @Composable
 fun ShowWholeStaff(
-    navController: NavController, viewModel: DetailScreenViewModel, modifier: Modifier, isInDarkTheme:() ->  Boolean
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateBack: () -> Unit,
+    viewModel: DetailScreenViewModel,
+    modifier: Modifier,
+    isInDarkTheme: () -> Boolean
 ) {
 
     val staffState by viewModel.staffList.collectAsStateWithLifecycle()
@@ -69,7 +73,7 @@ fun ShowWholeStaff(
             SingleStaffMember(
                 person = data.person,
                 positions = data.positions,
-                navController = navController,
+                onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
                 modifier = modifier
             )
         }
@@ -77,12 +81,17 @@ fun ShowWholeStaff(
 
     }
     BackArrow(
-        modifier, navController, viewModel.animeDetails.value?.mal_id ?: 0,isInDarkTheme
+        modifier, onNavigateBack, viewModel.animeDetails.value?.mal_id ?: 0, isInDarkTheme
     )
 }
 
 @Composable
-private fun BackArrow(modifier: Modifier, navController: NavController, detailScreenMalId: Int,isInDarkTheme : () -> Boolean) {
+private fun BackArrow(
+    modifier: Modifier,
+    onNavigateBack: () -> Unit,
+    detailScreenMalId: Int,
+    isInDarkTheme: () -> Boolean
+) {
     val backArrowFirstColor =
         if (isInDarkTheme()) DarkBackArrowCastColor else BackArrowCastColor
     val backArrowSecondColor =
@@ -101,12 +110,13 @@ private fun BackArrow(modifier: Modifier, navController: NavController, detailSc
                 textAlign = TextAlign.Start,
                 textDecoration = TextDecoration.Underline,
                 modifier = modifier.clickable {
-                    navController.navigate("detail_screen/$detailScreenMalId") {
-                        launchSingleTop = true
-                        popUpTo(route = Screen.DetailOnWholeStaff.route) {
-                            inclusive = true
-                        }
-                    }
+//                    navController.navigate("detail_screen/$detailScreenMalId") {
+//                        launchSingleTop = true
+//                        popUpTo(route = Screen.DetailOnWholeStaff.route) {
+//                            inclusive = true
+//                        }
+//                    }
+                    onNavigateBack()
                 },
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontFamily = evolventaBoldFamily
@@ -126,7 +136,10 @@ private fun BackArrow(modifier: Modifier, navController: NavController, detailSc
 
 @Composable
 private fun SingleStaffMember(
-    person: Person, positions: List<String>, navController: NavController, modifier: Modifier
+    person: Person,
+    positions: List<String>,
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    modifier: Modifier
 ) {
 
     var isVisible by remember {
@@ -143,7 +156,7 @@ private fun SingleStaffMember(
     ) {
 
         Box(modifier = modifier.clickable {
-            navController.navigate(route = "detail_on_staff/${person.mal_id}")
+            onNavigateToDetailOnStaff("detail_on_staff/${person.id}")
         }) {
             Row {
                 Column(modifier = modifier.padding(vertical = 2.dp, horizontal = 10.dp)) {

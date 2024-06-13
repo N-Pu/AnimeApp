@@ -55,35 +55,41 @@ import com.project.toko.detailScreen.model.castModel.VoiceActor
 
 @Composable
 fun ShowWholeCast(
-    navController: NavController,
+    onNavigateToDetailOnCharacter: (String) -> Unit,
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: DetailScreenViewModel,
     modifier: Modifier,
-    isInDarkTheme :() ->  Boolean
+    isInDarkTheme: () -> Boolean
 ) {
 
     val castList by
     viewModel.castList.collectAsStateWithLifecycle()
     val castWithJapVoiceActors = hasJapVoiceActor(castList)
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = modifier.background(MaterialTheme.colorScheme.primary)) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = modifier.background(MaterialTheme.colorScheme.primary)
+    ) {
         item { Spacer(modifier = modifier.height(70.dp)) }
         itemsIndexed(castWithJapVoiceActors) { _, data ->
             AddCast(
                 castList = data,
-                navController = navController,
+                onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
+                onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
                 modifier = modifier,
             )
 
         }
     }
 
-    BackArrow(modifier, navController, viewModel.loadedId.intValue, isInDarkTheme = isInDarkTheme)
+    BackArrow(modifier, onNavigateBack, viewModel.loadedId.intValue, isInDarkTheme = isInDarkTheme)
 }
 
 @Composable
 private fun AddCast(
     castList: CastData,
-    navController: NavController,
+    onNavigateToDetailOnCharacter: (String) -> Unit, onNavigateToDetailOnStaff: (String) -> Unit,
     modifier: Modifier,
 ) {
     Row(
@@ -108,7 +114,8 @@ private fun AddCast(
                 personPainter = rememberAsyncImagePainter(model = castList.voice_actors[0].person.images.jpg.image_url),
                 voiceActor = castList.voice_actors[0],
                 data = castList,
-                navController = navController
+                onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
+                onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
             )
         }
     }
@@ -121,14 +128,15 @@ private fun CurrentCast(
     characterPainter: AsyncImagePainter,
     voiceActor: VoiceActor,
     data: CastData,
-    navController: NavController
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (String) -> Unit
 ) {
 
     val customModifier = if (voiceActor.language == "") {
         modifier
     } else {
         modifier.clickable {
-            navController.navigate("detail_on_staff/${voiceActor.person.mal_id}") {}
+            onNavigateToDetailOnStaff("detail_on_staff/${voiceActor.person.id}")
         }
     }
     val svgImageLoader = ImageLoader.Builder(LocalContext.current).components {
@@ -274,7 +282,7 @@ private fun CurrentCast(
                         .fillMaxSize(0.9f)
                         .clip(RoundedCornerShape(2.dp))
                         .clickable {
-                            navController.navigate(route = "detail_on_character/${data.character.mal_id}")
+                            onNavigateToDetailOnCharacter("detail_on_character/${data.character.id}")
                         },
                     contentScale = ContentScale.FillBounds
                 )
@@ -285,9 +293,15 @@ private fun CurrentCast(
 }
 
 @Composable
-private fun BackArrow(modifier: Modifier, navController: NavController, detailScreenMalId: Int,  isInDarkTheme :() ->  Boolean) {
-    val backArrowFirstColor = if ( isInDarkTheme() ) DarkBackArrowCastColor else BackArrowCastColor
-    val backArrowSecondColor =if ( isInDarkTheme() ) DarkBackArrowSecondCastColor else BackArrowSecondCastColor
+private fun BackArrow(
+    modifier: Modifier,
+    onNavigateBack: () -> Unit,
+    detailScreenMalId: Int,
+    isInDarkTheme: () -> Boolean
+) {
+    val backArrowFirstColor = if (isInDarkTheme()) DarkBackArrowCastColor else BackArrowCastColor
+    val backArrowSecondColor =
+        if (isInDarkTheme()) DarkBackArrowSecondCastColor else BackArrowSecondCastColor
     Column {
         Spacer(modifier = modifier.height(40.dp))
         Box(
@@ -302,12 +316,13 @@ private fun BackArrow(modifier: Modifier, navController: NavController, detailSc
                 textAlign = TextAlign.Start,
                 textDecoration = TextDecoration.Underline,
                 modifier = modifier.clickable {
-                    navController.navigate("detail_screen/$detailScreenMalId") {
-                        launchSingleTop = true
-                        popUpTo(route = Screen.DetailOnWholeCast.route) {
-                            inclusive = true
-                        }
-                    }
+//                    navController.navigate("detail_screen/$detailScreenMalId") {
+//                        launchSingleTop = true
+//                        popUpTo(route = Screen.DetailOnWholeCast.route) {
+//                            inclusive = true
+//                        }
+//                    }
+                    onNavigateBack()
                 },
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontFamily = evolventaBoldFamily

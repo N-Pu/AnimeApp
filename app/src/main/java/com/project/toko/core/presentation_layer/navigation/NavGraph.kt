@@ -34,7 +34,12 @@ fun SetupNavGraph(
 
         composable(route = Screen.Home.route) {
             MainScreen(
-                navController = navController,
+                onNavigateToDetailScreen = { detailScreenId ->
+                    navController.navigate(detailScreenId)
+                    {
+                        launchSingleTop = true
+                    }
+                },
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
                 drawerState = drawerState,
@@ -48,7 +53,20 @@ fun SetupNavGraph(
         ) { backStackEntry ->
             val id = backStackEntry.arguments!!.getInt("id")
             ActivateDetailScreen(
-                navController = navController,
+                onNavigateToDetailOnCharacter = { characterId ->
+                    navController.navigate(characterId)
+
+                }, onNavigateToDetailOnStaff = { personId ->
+                    navController.navigate(personId)
+                }, onNavigateToWholeOnStaff = { wholeCastId ->
+                    navController.navigate(wholeCastId)
+
+                }, onNavigateToDetailScreen = { detailScreenId ->
+                    navController.navigate(detailScreenId)
+                    {
+                        launchSingleTop = true
+                    }
+                },
                 id = id,
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
@@ -61,7 +79,17 @@ fun SetupNavGraph(
         }
         composable(route = Screen.Favorites.route) {
             DaoScreen(
-                navController = navController,
+                onNavigateToDetailOnCharacter = { characterId ->
+                    navController.navigate(characterId)
+
+                }, onNavigateToDetailOnStaff = { personId ->
+                    navController.navigate(personId)
+                }, onNavigateToDetailScreen = { detailScreenId ->
+                    navController.navigate(detailScreenId)
+                    {
+                        launchSingleTop = true
+                    }
+                },
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
                 drawerState = drawerState,
@@ -70,23 +98,35 @@ fun SetupNavGraph(
         }
         composable(route = Screen.RandomAnimeOrManga.route) {
             ShowRandomAnime(
-                navController = navController,
-                modifier = modifier,
+                onNavigateToDetailScreen = { detailScreenId ->
+                    navController.navigate(detailScreenId) {
+                        launchSingleTop = true
+                    }
+                }, modifier = modifier
             )
         }
         composable(route = Screen.DetailOnWholeCast.route) {
-            val detailScreenViewModel : DetailScreenViewModel = hiltViewModel()
+            val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
             ShowWholeCast(
-                navController,
+                onNavigateToDetailOnCharacter = { characterId ->
+                    navController.navigate(characterId)
+
+                }, onNavigateToDetailOnStaff = { personId ->
+                    navController.navigate(personId)
+                },
+                onNavigateBack = { navController.navigateUp() },
                 detailScreenViewModel,
                 modifier,
                 isInDarkTheme = isInDarkTheme
             )
         }
         composable(route = Screen.DetailOnWholeStaff.route) {
-            val detailScreenViewModel : DetailScreenViewModel = hiltViewModel()
+            val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
             ShowWholeStaff(
-                navController,
+                onNavigateToDetailOnStaff = { personId ->
+                    navController.navigate(personId)
+                },
+                onNavigateBack = { navController.navigateUp() },
                 detailScreenViewModel,
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme
@@ -100,7 +140,17 @@ fun SetupNavGraph(
             val id = backStackEntry.arguments!!.getInt("id")
             DisplayCharacterFromId(
                 id = id,
-                navController = navController,
+                onNavigateToStaff = { staffId ->
+                    navController.navigate(staffId)
+                },
+                onNavigateToDetailScreen = { detailScreenId ->
+                    navController.navigate(detailScreenId) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
                 svgImageLoader = svgImageLoader
@@ -114,7 +164,16 @@ fun SetupNavGraph(
             val id = backStackEntry.arguments!!.getInt("id")
             DisplayPersonFullScreen(
                 id = id,
-                navController = navController,
+                onNavigateToDetailOnCharacter = { characterId ->
+                    navController.navigate(characterId)
+
+                }, onNavigateToDetailScreen = { detailScreenId ->
+                    navController.navigate(detailScreenId)
+                    {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateBack = { navController.navigateUp() },
                 modifier = modifier,
                 isInDarkTheme = isInDarkTheme,
                 svgImageLoader = svgImageLoader

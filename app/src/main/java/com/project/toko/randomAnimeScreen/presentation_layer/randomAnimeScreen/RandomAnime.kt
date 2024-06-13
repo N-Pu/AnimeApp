@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,10 +52,10 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
 @Composable
 fun ShowRandomAnime(
-    navController: NavController, modifier: Modifier
+    onNavigateToDetailScreen: (String) -> Unit, modifier: Modifier
 ) {
-    val randomViewModel : RandomAnimeViewModel = hiltViewModel()
-    val daoViewModel :DaoViewModel = hiltViewModel()
+    val randomViewModel: RandomAnimeViewModel = hiltViewModel()
+    val daoViewModel: DaoViewModel = hiltViewModel()
     val data by randomViewModel.animeDetails.collectAsStateWithLifecycle()
     var cardIsShown by randomViewModel.cardIsShown
     val context = LocalContext.current
@@ -91,7 +90,7 @@ fun ShowRandomAnime(
                                     randomViewModel.viewModelScope.launch(Dispatchers.IO) {
                                         daoViewModel.addToCategory(
                                             animeItem = AnimeItem(
-                                                id = data?.mal_id,
+                                                id = data?.id,
                                                 animeName = data?.title ?: "N/A",
                                                 animeImage = data?.images?.jpg?.large_image_url
                                                     ?: "",
@@ -115,12 +114,7 @@ fun ShowRandomAnime(
                                 }
 
                                 Direction.Up -> {
-                                    navigateToDetailScreen {
-                                        navController.navigate(route = "detail_screen/${data?.mal_id ?: 0}")
-                                        {
-                                            launchSingleTop = true
-                                        }
-                                    }
+                                    onNavigateToDetailScreen("detail_screen/${data?.id ?: 0}")
 
                                 }
 
@@ -141,7 +135,7 @@ fun ShowRandomAnime(
                             }
                         }
                     ),
-                navController = navController,
+                onNavigateToDetailScreen = onNavigateToDetailScreen,
                 context = context
             )
         } else {
@@ -177,7 +171,7 @@ fun ShowRandomAnime(
                 )
             }
         }
-        LaunchedEffect(data?.mal_id) {
+        LaunchedEffect(data?.id) {
             withContext(Dispatchers.IO) {
                 swipeState.offset.snapTo(Offset(0.0f, 1000.0f))
                 swipeState.offset.animateTo(Offset(0.0f, 0.0f))
@@ -192,7 +186,7 @@ fun ShowRandomAnime(
 private fun AnimeCard(
     data: AnimeSearchData?,
     modifier: Modifier,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     context: Context,
 ) {
 
@@ -203,12 +197,7 @@ private fun AnimeCard(
     val scoreRoundedCornerShape = remember { RoundedCornerShape(bottomEnd = 10.dp) }
     val clickableModifier = Modifier.clickable {
         if (data != null) {
-            navigateToDetailScreen {
-                navController.navigate(route = "detail_screen/${data.mal_id}")
-                {
-                    launchSingleTop = true
-                }
-            }
+            onNavigateToDetailScreen("detail_screen/${data.id}")
         }
     }
 

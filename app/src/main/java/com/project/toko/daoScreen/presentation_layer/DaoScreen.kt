@@ -97,7 +97,9 @@ import me.saket.swipe.SwipeableActionsBox
 
 @Composable
 fun DaoScreen(
-    navController: NavController,
+    onNavigateToDetailOnCharacter: (String) -> Unit,
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,
@@ -107,7 +109,7 @@ fun DaoScreen(
 
     var selectedListType by rememberSaveable { mutableStateOf(AnimeStatus.WATCHING) }
     val arrayOfEntries = AnimeStatus.values()
-    val viewModel : DaoViewModel = hiltViewModel()
+    val viewModel: DaoViewModel = hiltViewModel()
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val rightSortingMenu = remember { mutableStateOf(false) }
     val leftSortingMenu = remember { mutableStateOf(false) }
@@ -246,7 +248,7 @@ fun DaoScreen(
         ) {
             when (selectedListType) {
                 AnimeStatus.WATCHING -> DataAnimeList(
-                    navController = navController,
+                    onNavigateToDetailScreen = onNavigateToDetailScreen,
                     daoViewModel = viewModel,
                     modifier = modifier,
                     category = AnimeStatus.WATCHING.route,
@@ -259,7 +261,7 @@ fun DaoScreen(
                 )
 
                 AnimeStatus.PLANNED -> DataAnimeList(
-                    navController = navController,
+                    onNavigateToDetailScreen = onNavigateToDetailScreen,
                     daoViewModel = viewModel,
                     modifier = modifier,
                     category = AnimeStatus.PLANNED.route,
@@ -272,7 +274,7 @@ fun DaoScreen(
                 )
 
                 AnimeStatus.COMPLETED -> DataAnimeList(
-                    navController = navController,
+                    onNavigateToDetailScreen = onNavigateToDetailScreen,
                     daoViewModel = viewModel,
                     modifier = modifier,
                     category = AnimeStatus.COMPLETED.route,
@@ -285,7 +287,7 @@ fun DaoScreen(
                 )
 
                 AnimeStatus.DROPPED -> DataAnimeList(
-                    navController = navController,
+                    onNavigateToDetailScreen = onNavigateToDetailScreen,
                     daoViewModel = viewModel,
                     modifier = modifier,
                     category = AnimeStatus.DROPPED.route,
@@ -298,7 +300,7 @@ fun DaoScreen(
                 )
 
                 AnimeStatus.FAVORITE -> FavoriteList(
-                    navController = navController,
+                 onNavigateToDetailScreen = onNavigateToDetailScreen,
                     daoViewModel = viewModel,
                     modifier = modifier,
                     isSortedAlphabetically = isSortedAlphabetically,
@@ -310,12 +312,12 @@ fun DaoScreen(
                 )
 
                 AnimeStatus.PERSON -> ShowPerson(
-                    navController = navController,
+                    onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
                     modifier = modifier
                 )
 
                 AnimeStatus.CHARACTER -> ShowCharacter(
-                    navController = navController,
+                    onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
                     modifier = modifier,
                     daoViewModel = viewModel,
                 )
@@ -369,7 +371,7 @@ private fun FavoriteAnimeListButton(
 // (watching, planned, watched, dropped)
 @Composable
 private fun DataAnimeList(
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     daoViewModel: DaoViewModel,
     modifier: Modifier,
     isSortedAlphabetically: MutableState<Boolean>,
@@ -444,7 +446,7 @@ private fun DataAnimeList(
                 ) {
                     DataScreenCardBox(
                         animeItem = animeItem,
-                        navController = navController,
+                        onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier = modifier.background(MaterialTheme.colorScheme.primary)
                     )
                 }
@@ -555,7 +557,7 @@ private fun DataAnimeList(
 
 @Composable
 private fun FavoriteList(
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     daoViewModel: DaoViewModel,
     modifier: Modifier,
     isSortedAlphabetically: MutableState<Boolean>,
@@ -619,7 +621,7 @@ private fun FavoriteList(
                 ) {
                     FavoriteScreenCardBox(
                         favoriteItem = favoriteItem,
-                        navController = navController,
+                        onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier = modifier
                     )
                 }
@@ -726,7 +728,7 @@ private fun FavoriteList(
 
 @Composable
 private fun ShowCharacter(
-    navController: NavController,
+    onNavigateToDetailOnCharacter: (String) -> Unit,
     modifier: Modifier,
     daoViewModel: DaoViewModel
 ) {
@@ -762,7 +764,7 @@ private fun ShowCharacter(
                 ) {
                     CharacterCardBox(
                         characterItem = characterItem,
-                        navController = navController,
+                        onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
                         modifier = modifier
                     )
                 }
@@ -774,13 +776,13 @@ private fun ShowCharacter(
 @Composable
 private fun CharacterCardBox(
     characterItem: CharacterItem,
-    navController: NavController,
+    onNavigateToDetailOnCharacter: (String) -> Unit,
     modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(model = characterItem.image)
     Box(modifier = modifier.clickable {
         characterItem.id?.let {
-            navController.navigate("detail_on_character/${it}")
+            onNavigateToDetailOnCharacter("detail_on_character/${it}")
         }
     }) {
         Row {
@@ -829,11 +831,11 @@ private fun CharacterCardBox(
 
 @Composable
 private fun ShowPerson(
-    navController: NavController,
+    onNavigateToDetailOnStaff: (String) -> Unit,
     modifier: Modifier
 ) {
 
-    val daoViewModel : DaoViewModel = hiltViewModel()
+    val daoViewModel: DaoViewModel = hiltViewModel()
     val personList by daoViewModel.getAllPeople()
         .collectAsStateWithLifecycle(initialValue = emptyList())
 
@@ -862,7 +864,7 @@ private fun ShowPerson(
                 ) {
                     PersonCardBox(
                         personItem = personItem,
-                        navController = navController,
+                        onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
                         modifier = modifier
                     )
                 }
@@ -875,7 +877,7 @@ private fun ShowPerson(
 @Composable
 private fun PersonCardBox(
     personItem: PersonItem,
-    navController: NavController,
+    onNavigateToDetailOnStaff: (String) -> Unit,
     modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(model = personItem.image)
@@ -885,7 +887,7 @@ private fun PersonCardBox(
         if (personItem.givenName.isNullOrEmpty()) "Given name: N/A" else "Given name: ${personItem.givenName}"
     Box(modifier = modifier.clickable {
         personItem.id?.let {
-            navController.navigate("detail_on_staff/${it}")
+            onNavigateToDetailOnStaff("detail_on_staff/${it}")
         }
     }) {
         Row {
@@ -938,7 +940,7 @@ private fun PersonCardBox(
 @Composable
 private fun DataScreenCardBox(
     animeItem: AnimeItem,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(model = animeItem.animeImage)
@@ -955,12 +957,7 @@ private fun DataScreenCardBox(
 
     Column(modifier = modifier.clickable {
         animeItem.id?.let {
-            navigateToDetailScreen {
-                navController.navigate(route = "detail_screen/${it}")
-                {
-                    launchSingleTop = true
-                }
-            }
+            onNavigateToDetailScreen("detail_screen/${it}")
         }
     }, verticalArrangement = Arrangement.SpaceBetween) {
         Row {
@@ -1090,7 +1087,7 @@ private fun DataScreenCardBox(
 @Composable
 private fun FavoriteScreenCardBox(
     favoriteItem: FavoriteItem,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(model = favoriteItem.animeImage)
@@ -1105,12 +1102,7 @@ private fun FavoriteScreenCardBox(
 
     Column(modifier = modifier.clickable {
         favoriteItem.id?.let {
-            navigateToDetailScreen {
-                navController.navigate(route = "detail_screen/${it}")
-                {
-                    launchSingleTop = true
-                }
-            }
+            onNavigateToDetailScreen("detail_screen/${it}")
         }
     }, verticalArrangement = Arrangement.SpaceBetween) {
         Row {

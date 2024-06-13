@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.AsyncImagePainter
 import coil.decode.SvgDecoder
@@ -51,7 +50,12 @@ import java.lang.Integer.min
 
 @Composable
 fun DisplayCast(
-    castList: List<CastData>, navController: NavController, modifier: Modifier, detailMalId: Int
+    castList: List<CastData>,
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToWholeOnStaff: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (String) -> Unit,
+    modifier: Modifier,
+    detailMalId: Int
 ) {
 
     if (castList.isNotEmpty()) {
@@ -63,7 +67,7 @@ fun DisplayCast(
         Row(
             modifier = modifier
                 .fillMaxWidth(1f)
-                .padding(bottom = 20.dp, start =  20.dp, end =  20.dp),
+                .padding(bottom = 20.dp, start = 20.dp, end = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
@@ -86,7 +90,9 @@ fun DisplayCast(
 
         AddCast(
             castList = castWithJapVoiceActors,
-            navController = navController,
+            onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
+            onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
+            onNavigateToDetailOnWholeCast = onNavigateToWholeOnStaff,
             modifier = modifier,
             numCharacterAndActors = numCharacterAndActors,
             detailMalId = detailMalId
@@ -99,7 +105,9 @@ fun DisplayCast(
 @Composable
 private fun AddCast(
     castList: List<CastData>,
-    navController: NavController,
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (String) -> Unit,
+    onNavigateToDetailOnWholeCast: (String) -> Unit,
     modifier: Modifier,
     numCharacterAndActors: Int,
     detailMalId: Int
@@ -133,7 +141,8 @@ private fun AddCast(
                         personPainter = rememberAsyncImagePainter(model = castList[j].voice_actors[0].person.images.jpg.image_url),
                         voiceActor = castList[j].voice_actors[0],
                         data = castList[j],
-                        navController = navController
+                        onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
+                        onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter
                     )
                 }
             }
@@ -159,8 +168,7 @@ private fun AddCast(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.onSecondary)
                     .clickable {
-//                        navController.navigate(Screen.DetailOnWholeCast.route)
-                        navController.navigate("detail_on_whole_cast/${detailMalId}")
+                        onNavigateToDetailOnWholeCast("detail_on_whole_cast/${detailMalId}")
                     }, contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -201,14 +209,15 @@ private fun CurrentCast(
     characterPainter: AsyncImagePainter,
     voiceActor: VoiceActor,
     data: CastData,
-    navController: NavController
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (String) -> Unit
 ) {
 
     val customModifier = if (voiceActor.language == "") {
         modifier
     } else {
         modifier.clickable {
-            navController.navigate("detail_on_staff/${voiceActor.person.mal_id}") {}
+            onNavigateToDetailOnStaff("detail_on_staff/${voiceActor.person.id}")
         }
     }
     val svgImageLoader = ImageLoader.Builder(LocalContext.current).components {
@@ -358,11 +367,7 @@ private fun CurrentCast(
                         .height(107.dp)
                         .clip(RoundedCornerShape(6.dp))
                         .clickable {
-                            navController.navigate(route = "detail_on_character/${data.character.mal_id}") {
-//                            popUpTo(Screen.Detail.route) {
-//                                inclusive = true
-//                            }
-                            }
+                            onNavigateToDetailOnCharacter("detail_on_character/${data.character.id}")
                         },
                     contentScale = ContentScale.Fit // Масштабирование изображения, чтобы вмещалось в квадрат
                 )
@@ -397,3 +402,5 @@ private fun getJapOrFirstVoiceActor(data: CastData): VoiceActor {
         )
     }
 }
+
+

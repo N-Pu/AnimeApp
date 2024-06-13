@@ -73,7 +73,7 @@ import kotlinx.coroutines.launch
 fun CustomDialog(
     onDismiss: () -> Unit,
     data: com.project.toko.homeScreen.model.newAnimeSearchModel.AnimeSearchData,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader
@@ -162,7 +162,7 @@ fun CustomDialog(
                         verticalArrangement = Arrangement.Center
                     ) {
                         DisplayDialogPicture(
-                            painter, data.mal_id, navController, modifier = modifier
+                            painter, data.id, onNavigateToDetailScreen = onNavigateToDetailScreen, modifier = modifier
                         )
                     }
                     Column(
@@ -464,7 +464,7 @@ private fun AddToDataBaseRow(
     isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader
 ) {
-    val daoViewModel :DaoViewModel = hiltViewModel()
+    val daoViewModel: DaoViewModel = hiltViewModel()
     var isExpanded by remember { mutableStateOf(false) }
 
     val threeDots = if (isInDarkTheme()) {
@@ -492,7 +492,7 @@ private fun AddToDataBaseRow(
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
                 color = if (daoViewModel.containsItemIdInCategory(
-                        id = data.mal_id,
+                        id = data.id,
                         AnimeStatus.WATCHING.route
                     ).collectAsStateWithLifecycle(initialValue = false).value
                 ) Color.Yellow else MaterialTheme.colorScheme.primary,
@@ -500,13 +500,13 @@ private fun AddToDataBaseRow(
         }, modifier = modifier.weight(1f), onClick = {
             daoViewModel.viewModelScope.launch(Dispatchers.IO) {
                 if (daoViewModel.containsItemIdInCategory(
-                        data.mal_id,
+                        data.id,
                         AnimeStatus.WATCHING.route
                     ).first()
                 ) {
                     daoViewModel.removeFromDataBase(
                         AnimeItem(
-                            data.mal_id,
+                            data.id,
                             data.title,
                             data.score.toString(),
                             data.scored_by.toInt().toString(),
@@ -522,7 +522,7 @@ private fun AddToDataBaseRow(
                 } else {
                     daoViewModel.addToCategory(
                         AnimeItem(
-                            data.mal_id,
+                            data.id,
                             data.title,
                             data.score.toString(),
                             data.scored_by.toInt().toString(),
@@ -547,7 +547,7 @@ private fun AddToDataBaseRow(
                 ), contentDescription = null, modifier = modifier.size(25.dp),
                 colorFilter =
                 if (daoViewModel.containsItemIdInCategory(
-                        id = data.mal_id,
+                        id = data.id,
                         AnimeStatus.WATCHING.route
                     ).collectAsStateWithLifecycle(initialValue = false).value
                 ) ColorFilter.tint(Color.Yellow) else ColorFilter.tint(MaterialTheme.colorScheme.primary)
@@ -560,7 +560,7 @@ private fun AddToDataBaseRow(
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
                 color = if (daoViewModel.containsItemIdInCategory(
-                        id = data.mal_id,
+                        id = data.id,
                         AnimeStatus.COMPLETED.route
                     ).collectAsStateWithLifecycle(initialValue = false).value
                 ) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
@@ -568,13 +568,13 @@ private fun AddToDataBaseRow(
         }, modifier = modifier.weight(1f), onClick = {
             daoViewModel.viewModelScope.launch(Dispatchers.IO) {
                 if (daoViewModel.containsItemIdInCategory(
-                        data.mal_id,
+                        data.id,
                         AnimeStatus.COMPLETED.route
                     ).first()
                 ) {
                     daoViewModel.removeFromDataBase(
                         AnimeItem(
-                            data.mal_id,
+                            data.id,
                             data.title,
                             data.score.toString(),
                             data.scored_by.toInt().toString(),
@@ -590,7 +590,7 @@ private fun AddToDataBaseRow(
                 } else {
                     daoViewModel.addToCategory(
                         AnimeItem(
-                            data.mal_id,
+                            data.id,
                             data.title,
                             data.score.toString(),
                             data.scored_by.toInt().toString(),
@@ -615,7 +615,7 @@ private fun AddToDataBaseRow(
                 ), contentDescription = null, modifier = modifier.size(22.dp),
                 colorFilter =
                 if (daoViewModel.containsItemIdInCategory(
-                        id = data.mal_id,
+                        id = data.id,
                         AnimeStatus.COMPLETED.route
                     ).collectAsStateWithLifecycle(initialValue = false).value
                 ) ColorFilter.tint(MaterialTheme.colorScheme.secondary) else ColorFilter.tint(
@@ -630,7 +630,7 @@ private fun AddToDataBaseRow(
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
                 color = if (daoViewModel.containsItemIdInCategory(
-                        id = data.mal_id,
+                        id = data.id,
                         AnimeStatus.DROPPED.route
                     ).collectAsStateWithLifecycle(initialValue = false).value
                 ) Color.Red else MaterialTheme.colorScheme.primary,
@@ -638,13 +638,13 @@ private fun AddToDataBaseRow(
         }, modifier = modifier.weight(1f), onClick = {
             daoViewModel.viewModelScope.launch(Dispatchers.IO) {
                 if (daoViewModel.containsItemIdInCategory(
-                        data.mal_id,
+                        data.id,
                         AnimeStatus.DROPPED.route
                     ).first()
                 ) {
                     daoViewModel.removeFromDataBase(
                         AnimeItem(
-                            data.mal_id,
+                            data.id,
                             data.title,
                             data.score.toString(),
                             data.scored_by.toInt().toString(),
@@ -660,7 +660,7 @@ private fun AddToDataBaseRow(
                 } else {
                     daoViewModel.addToCategory(
                         AnimeItem(
-                            data.mal_id,
+                            data.id,
                             data.title,
                             data.score.toString(),
                             data.scored_by.toInt().toString(),
@@ -685,7 +685,7 @@ private fun AddToDataBaseRow(
                 ), contentDescription = null, modifier = modifier.size(25.dp),
                 colorFilter =
                 if (daoViewModel.containsItemIdInCategory(
-                        id = data.mal_id,
+                        id = data.id,
                         AnimeStatus.DROPPED.route
                     ).collectAsStateWithLifecycle(initialValue = false).value
                 ) ColorFilter.tint(Color.Red) else ColorFilter.tint(MaterialTheme.colorScheme.primary)
@@ -698,19 +698,19 @@ private fun AddToDataBaseRow(
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
                 color = if (daoViewModel.containsInFavorite(
-                        id = data.mal_id
+                        id = data.id
                     ).collectAsStateWithLifecycle(initialValue = false).value
                 ) Color.Red else MaterialTheme.colorScheme.primary,
             )
         }, modifier = modifier.weight(1f), onClick = {
             daoViewModel.viewModelScope.launch(Dispatchers.IO) {
                 if (daoViewModel.containsInFavorite(
-                        data.mal_id
+                        data.id
                     ).first()
                 ) {
                     daoViewModel.removeFromFavorite(
                         FavoriteItem(
-                            data.mal_id,
+                            data.id,
                             data.title,
                             data.score.toString(),
                             data.scored_by.toInt().toString(),
@@ -726,7 +726,7 @@ private fun AddToDataBaseRow(
                 } else {
                     daoViewModel.addToFavorite(
                         FavoriteItem(
-                            data.mal_id,
+                            data.id,
                             data.title,
                             data.score.toString(),
                             data.scored_by.toInt().toString(),
@@ -749,14 +749,14 @@ private fun AddToDataBaseRow(
                 modifier = modifier.size(25.dp),
                 painter = rememberAsyncImagePainter(
                     model = if (daoViewModel.containsInFavorite(
-                            id = data.mal_id
+                            id = data.id
                         ).collectAsStateWithLifecycle(initialValue = false).value
                     ) R.drawable.favorite_touched else
                         R.drawable.favorite_untouched, imageLoader = svgImageLoader
                 ),
                 contentDescription = null,
                 colorFilter = if (daoViewModel.containsInFavorite(
-                        id = data.mal_id
+                        id = data.id
                     ).collectAsStateWithLifecycle(initialValue = false).value
                 ) null else ColorFilter.tint(
                     MaterialTheme.colorScheme.primary
@@ -784,7 +784,7 @@ private fun AddToDataBaseRow(
                 .background(
                     if (daoViewModel
                             .containsItemIdInCategory(
-                                id = data.mal_id,
+                                id = data.id,
                                 AnimeStatus.PLANNED.route
                             )
                             .collectAsStateWithLifecycle(initialValue = false).value
@@ -801,14 +801,14 @@ private fun AddToDataBaseRow(
                     daoViewModel.viewModelScope.launch(Dispatchers.IO) {
                         if (daoViewModel
                                 .containsItemIdInCategory(
-                                    data.mal_id,
+                                    data.id,
                                     AnimeStatus.PLANNED.route
                                 )
                                 .first()
                         ) {
                             daoViewModel.removeFromDataBase(
                                 AnimeItem(
-                                    data.mal_id,
+                                    data.id,
                                     data.title,
                                     data.score.toString(),
                                     data.scored_by
@@ -826,7 +826,7 @@ private fun AddToDataBaseRow(
                         } else {
                             daoViewModel.addToCategory(
                                 AnimeItem(
-                                    data.mal_id,
+                                    data.id,
                                     data.title,
                                     data.score.toString(),
                                     data.scored_by
@@ -864,7 +864,7 @@ private fun AddToDataBaseRow(
         ) {
             when {
                 daoViewModel.containsItemIdInCategory(
-                    id = data.mal_id,
+                    id = data.id,
                     AnimeStatus.WATCHING.route
                 ).collectAsStateWithLifecycle(initialValue = false).value -> {
                     Image(
@@ -882,7 +882,7 @@ private fun AddToDataBaseRow(
                 }
 
                 daoViewModel.containsItemIdInCategory(
-                    id = data.mal_id,
+                    id = data.id,
                     AnimeStatus.COMPLETED.route
                 ).collectAsStateWithLifecycle(initialValue = false).value -> {
                     Image(
@@ -900,7 +900,7 @@ private fun AddToDataBaseRow(
                 }
 
                 daoViewModel.containsItemIdInCategory(
-                    id = data.mal_id,
+                    id = data.id,
                     AnimeStatus.DROPPED.route
                 ).collectAsStateWithLifecycle(initialValue = false).value -> {
                     Image(
@@ -1087,7 +1087,7 @@ private fun Synopsis(
 
 @Composable
 private fun DisplayDialogPicture(
-    painter: Painter, mal_id: Int, navController: NavController, modifier: Modifier
+    painter: Painter, id: Int, onNavigateToDetailScreen: (String) -> Unit, modifier: Modifier
 ) {
 
 
@@ -1101,12 +1101,7 @@ private fun DisplayDialogPicture(
             .fillMaxSize()
             .clip(CardDefaults.shape)
             .clickable {
-                navigateToDetailScreen {
-                    navController.navigate(route = "detail_screen/${mal_id}")
-                    {
-                        launchSingleTop = true
-                    }
-                }
+                onNavigateToDetailScreen("detail_screen/${id}")
             },
         alignment = Alignment.Center,
     )

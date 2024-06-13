@@ -16,7 +16,7 @@ data class AnimeSearchData(
     @SerializedName("genres") val genres: List<Genre>,
     @SerializedName("images") val images: Images,
     @SerializedName("licensors") val licensors: List<Licensor>,
-    @SerializedName("mal_id") val mal_id: Int,
+    @SerializedName("mal_id") val id: Int,
     @SerializedName("members") val members: Int,
     @SerializedName("popularity") val popularity: Int,
     @SerializedName("producers") val producers: List<Producer>,

@@ -25,14 +25,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.project.toko.core.presentation_layer.theme.evolventaBoldFamily
-import com.project.toko.homeScreen.presentation_layer.homeScreen.navigateToDetailScreen
 import com.project.toko.personDetailedScreen.model.personFullModel.Voice
 
 @Composable
-fun ShowAnimeRelated(modifier: Modifier, voices: List<Voice>, navController: NavController) {
+fun ShowAnimeRelated(
+    modifier: Modifier,
+    voices: List<Voice>,
+    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (String) -> Unit,
+) {
 
     Row(modifier = modifier.padding(start = 20.dp, top = 10.dp, bottom = 20.dp)) {
-        Text(text = "Voice Acting Roles", fontSize = 24.sp,
+        Text(
+            text = "Voice Acting Roles", fontSize = 24.sp,
             color = MaterialTheme.colorScheme.onPrimary,
             fontFamily = evolventaBoldFamily
         )
@@ -61,12 +66,7 @@ fun ShowAnimeRelated(modifier: Modifier, voices: List<Voice>, navController: Nav
                         modifier = modifier
                             .fillMaxSize()
                             .clickable {
-                                navigateToDetailScreen {
-                                    navController.navigate(route = "detail_screen/${voices[i].anime.mal_id}")
-                                    {
-                                        launchSingleTop = true
-                                    }
-                                }
+                                onNavigateToDetailScreen("detail_screen/${voices[i].anime.id}")
                             },
                         alignment = Alignment.Center
                     )
@@ -82,17 +82,25 @@ fun ShowAnimeRelated(modifier: Modifier, voices: List<Voice>, navController: Nav
                         horizontalArrangement = Arrangement.Start,
                         modifier = modifier.fillMaxWidth()
                     ) {
-                        Text(text = voices[i].anime.title, fontSize = 16.sp, minLines = 1, maxLines = 3, overflow = TextOverflow.Ellipsis,
+                        Text(
+                            text = voices[i].anime.title,
+                            fontSize = 16.sp,
+                            minLines = 1,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
                             color = MaterialTheme.colorScheme.onPrimary,
-                            fontFamily = evolventaBoldFamily)
+                            fontFamily = evolventaBoldFamily
+                        )
 
                     }
                     Row(
                         horizontalArrangement = Arrangement.Start,
                         modifier = modifier.fillMaxWidth()
                     ) {
-                        Text(text = voices[i].role, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.onPrimary)
+                        Text(
+                            text = voices[i].role, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                     Row(
                         horizontalArrangement = Arrangement.End,
@@ -101,9 +109,14 @@ fun ShowAnimeRelated(modifier: Modifier, voices: List<Voice>, navController: Nav
                             .fillMaxHeight()
                             .fillMaxWidth()
                     ) {
-                        Text(text = voices[i].character.name, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        Text(
+                            text = voices[i].character.name,
+                            fontSize = 16.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             color = MaterialTheme.colorScheme.onPrimary,
-                            fontFamily = evolventaBoldFamily)
+                            fontFamily = evolventaBoldFamily
+                        )
                     }
                 }
                 Column(
@@ -119,7 +132,7 @@ fun ShowAnimeRelated(modifier: Modifier, voices: List<Voice>, navController: Nav
                         modifier = modifier
                             .fillMaxSize()
                             .clickable {
-                                navController.navigate(route = "detail_on_character/${voices[i].character.mal_id}")
+                                onNavigateToDetailOnCharacter("detail_on_character/${voices[i].character.id}")
                             },
                         alignment = Alignment.Center
                     )

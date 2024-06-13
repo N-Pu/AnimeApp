@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -56,14 +55,17 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ActivateDetailScreen(
-    navController: NavController,
+    onNavigateToDetailOnCharacter: (String) -> Unit,
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToWholeOnStaff: (String) -> Unit,
+    onNavigateToDetailScreen: (String) -> Unit,
     id: Int,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader
 ) {
 
-    val viewModel : DetailScreenViewModel = hiltViewModel()
+    val viewModel: DetailScreenViewModel = hiltViewModel()
 
     val detailData by
     viewModel.animeDetails.collectAsStateWithLifecycle()
@@ -80,7 +82,7 @@ fun ActivateDetailScreen(
 
 
     LaunchedEffect(key1 = id) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             viewModel.loadAllInfo(id, context)
         }
     }
@@ -208,23 +210,28 @@ fun ActivateDetailScreen(
                     ShowMoreInformation(modifier = modifier, detailData = detailData)
                     ShowBackground(detailData = detailData, modifier = modifier)
                     DisplayCast(
-                        castList = castData, navController = navController,
-                        modifier = modifier, detailMalId = viewModel.loadedId.intValue
+                        castList = castData,
+                        onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
+                        onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
+                        onNavigateToWholeOnStaff = onNavigateToWholeOnStaff,
+                        modifier = modifier,
+                        detailMalId = viewModel.loadedId.intValue
                     )
                     DisplayStaff(
                         staffList = staffData,
-                        navController = navController,
+                   onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
+                        onNavigateToWholeOnStaff = onNavigateToWholeOnStaff,
                         modifier = modifier
                     )
 //            ShowStudios(detailData, navController)
                     ExpandableRelated(
                         relations = detailData?.relations,
                         modifier = modifier,
-                        navController = navController
+                        onNavigateToDetailScreen = onNavigateToDetailScreen
                     )
                     Recommendations(
                         recommendationsData,
-                        navController,
+                        onNavigateToDetailScreen = onNavigateToDetailScreen,
                         modifier,
                         isInDarkTheme
                     )
