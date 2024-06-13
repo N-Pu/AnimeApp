@@ -51,7 +51,7 @@ private fun ShowRelation(relation: String, modifier: Modifier) {
 private fun CurrentRelation(
     modifier: Modifier,
     entry: Entry,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit,
 ) {
 
     if (entry.type != "manga") {
@@ -62,12 +62,7 @@ private fun CurrentRelation(
                 color = MaterialTheme.colorScheme.secondary,
                 text = entry.name + " (" + entry.type + ")",
                 modifier = modifier.clickable {
-                    navigateToDetailScreen {
-                        navController.navigate(route = "detail_screen/${entry.mal_id}")
-                        {
-                            launchSingleTop = true
-                        }
-                    }
+                    onNavigateToDetailScreen("detail_screen/${entry.mal_id}")
                 })
         }
     } else {
@@ -87,7 +82,7 @@ private fun CurrentRelation(
 fun ExpandableRelated(
     relations: List<Relation>?,
     modifier: Modifier,
-    navController: NavController,
+    onNavigateToDetailScreen: (String) -> Unit
 ) {
     val maxItemsToShow = 2
     var itemsToShow by remember { mutableIntStateOf(maxItemsToShow) }
@@ -128,7 +123,7 @@ fun ExpandableRelated(
                         related.entry.forEach { currentEntry ->
                             CurrentRelation(
                                 modifier, currentEntry,
-                                navController
+                                onNavigateToDetailScreen = onNavigateToDetailScreen
                             )
                         }
                     }

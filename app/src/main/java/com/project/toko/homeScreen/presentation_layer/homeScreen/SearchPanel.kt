@@ -63,13 +63,13 @@ import kotlinx.coroutines.withContext
 @Stable
 @Composable
 fun MainScreen(
-    navController: NavHostController,
+    onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,
     svgImageLoader: ImageLoader
 ) {
-    val viewModel : HomeScreenViewModel = hiltViewModel()
+    val viewModel: HomeScreenViewModel = hiltViewModel()
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val switchIndicator = remember { viewModel.switchIndicator }
     val scope = rememberCoroutineScope()
@@ -217,7 +217,7 @@ fun MainScreen(
             TabSelectionMenu(viewModel, modifier) { switchIndicator }
 
             GridAdder(
-                navController = navController,
+                onNavigateToDetailScreen = onNavigateToDetailScreen,
                 modifier = modifier,
                 switch = { switchIndicator.value },
                 isInDarkTheme = isInDarkTheme,

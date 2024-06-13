@@ -19,14 +19,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.project.toko.characterDetailedScreen.model.characterFullModel.Anime
 import com.project.toko.core.presentation_layer.theme.evolventaBoldFamily
-import com.project.toko.homeScreen.presentation_layer.homeScreen.navigateToDetailScreen
+
 
 @Composable
-fun ShowAnimeRelated(modifier: Modifier, animes: List<Anime>, navController: NavController) {
+fun ShowAnimeRelated(
+    modifier: Modifier,
+    animes: List<Anime>,
+    onNavigateToDetailScreen: (String) -> Unit
+) {
 
     Row(modifier = modifier.padding(start = 20.dp, top = 10.dp)) {
         Text(
@@ -46,12 +49,7 @@ fun ShowAnimeRelated(modifier: Modifier, animes: List<Anime>, navController: Nav
 
                 .clip(CardDefaults.shape)
                 .clickable {
-                    navigateToDetailScreen {
-                        navController.navigate(route = "detail_screen/${animes[i].anime.mal_id}")
-                        {
-                            launchSingleTop = true
-                        }
-                    }
+                    onNavigateToDetailScreen("detail_screen/${animes[i].anime.mal_id}")
                 }) {
                 Column(
                     modifier = modifier

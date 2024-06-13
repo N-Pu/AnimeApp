@@ -40,12 +40,13 @@ import kotlinx.coroutines.withContext
 @Composable
 fun DisplayCharacterFromId(
     id: Int,
-    navController: NavController,
-
+    onNavigateToStaff: (String) -> Unit,
+    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier, isInDarkTheme: () -> Boolean, svgImageLoader: ImageLoader
 ) {
-    val characterViewModel :CharacterFullByIdViewModel = hiltViewModel()
-    val daoViewModel :DaoViewModel = hiltViewModel()
+    val characterViewModel: CharacterFullByIdViewModel = hiltViewModel()
+    val daoViewModel: DaoViewModel = hiltViewModel()
     val context = LocalContext.current
     LaunchedEffect(id) {
         withContext(Dispatchers.IO) {
@@ -109,7 +110,7 @@ fun DisplayCharacterFromId(
                         ShowVoiceActors(
                             modifier = modifier,
                             actors = characterFullState!!.voices,
-                            navController = navController
+                            onNavigateToStaff = onNavigateToStaff
                         )
 
                     }
@@ -120,12 +121,12 @@ fun DisplayCharacterFromId(
                         ShowAnimeRelated(
                             modifier = modifier,
                             animes = characterFullState?.anime!!,
-                            navController = navController
+                          onNavigateToDetailScreen = onNavigateToDetailScreen
                         )
 
                     }
                 }
-                BackArrow(modifier, navController, isInDarkTheme)
+                BackArrow(modifier, isInDarkTheme, onNavigateBack,)
 
             },
             onLoad = {
@@ -143,8 +144,8 @@ fun DisplayCharacterFromId(
 @Composable
 private fun BackArrow(
     modifier: Modifier,
-    navController: NavController,
-    isInDarkTheme: () -> Boolean
+    isInDarkTheme: () -> Boolean,
+    onNavigateBack: () -> Unit
 ) {
     val backArrowFirstColor = if (isInDarkTheme()) DarkBackArrowCastColor else BackArrowCastColor
     val backArrowSecondColor =
@@ -162,7 +163,7 @@ private fun BackArrow(
                 textAlign = TextAlign.Start,
                 textDecoration = TextDecoration.Underline,
                 modifier = modifier.clickable {
-                    navController.popBackStack()
+                   onNavigateBack()
                 },
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontFamily = evolventaBoldFamily,

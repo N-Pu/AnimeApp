@@ -33,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.project.toko.R
@@ -45,11 +44,17 @@ import java.lang.Integer.min
 @Composable
 fun DisplayStaff(
     staffList: List<StaffData>,
-    navController: NavController,
+    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToWholeOnStaff: (String) -> Unit,
     modifier: Modifier
 ) {
     if (staffList.isNotEmpty()) {
-        ListEditor(listData = staffList, navController = navController, modifier = modifier)
+        ListEditor(
+            listData = staffList,
+            onNavigateToDetailStaff = onNavigateToDetailOnStaff,
+            onNavigateToWholeStaff = onNavigateToWholeOnStaff,
+            modifier = modifier
+        )
     }
 }
 
@@ -57,7 +62,8 @@ fun DisplayStaff(
 @Composable
 private fun ListEditor(
     listData: List<StaffData>,
-    navController: NavController,
+    onNavigateToDetailStaff: (String) -> Unit,
+    onNavigateToWholeStaff: (String) -> Unit,
     modifier: Modifier
 ) {
     val minListSize = min(12, listData.size)
@@ -102,7 +108,7 @@ private fun ListEditor(
             StaffComponentsCard(
                 data = data,
                 personPainter = personPainter,
-                navController = navController,
+                onNavigateToDetailStaff = onNavigateToDetailStaff,
                 modifier = modifier
             )
         }
@@ -126,7 +132,7 @@ private fun ListEditor(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.onSecondary)
                     .clickable {
-                        navController.navigate(Screen.DetailOnWholeStaff.route)
+                        onNavigateToWholeStaff(Screen.DetailOnWholeStaff.route)
                     }, contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -159,7 +165,7 @@ private fun StaffComponentsCard(
     modifier: Modifier,
     data: StaffData,
     personPainter: AsyncImagePainter,
-    navController: NavController
+    onNavigateToDetailStaff: (String) -> Unit
 ) {
     val positions = data.positions.joinToString(separator = ", ")
     Row(
@@ -187,8 +193,7 @@ private fun StaffComponentsCard(
                     .width(70.dp)
                     .height(107.dp)
                     .clickable {
-                        navController.navigate("detail_on_staff/${data.person.mal_id}") {
-                        }
+                        onNavigateToDetailStaff("detail_on_staff/${data.person.id}")
                     },
                 contentScale = ContentScale.FillBounds
             )
