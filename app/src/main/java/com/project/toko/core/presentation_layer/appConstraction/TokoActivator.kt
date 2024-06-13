@@ -40,7 +40,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,9 +75,7 @@ import com.project.toko.core.presentation_layer.theme.evolventaBoldFamily
 import com.project.toko.core.utils.share.openSite
 import com.project.toko.daoScreen.daoViewModel.DaoViewModel
 import com.project.toko.daoScreen.model.AnimeStatus
-import com.project.toko.detailScreen.viewModel.DetailScreenViewModel
 import com.project.toko.homeScreen.viewModel.HomeScreenViewModel
-import com.project.toko.personDetailedScreen.viewModel.PersonByIdViewModel
 import com.project.toko.randomAnimeScreen.viewModel.RandomAnimeViewModel
 import kotlinx.coroutines.launch
 

@@ -4,7 +4,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,7 +14,6 @@ import coil.ImageLoader
 import com.project.toko.detailScreen.viewModel.DetailScreenViewModel
 import com.project.toko.detailScreen.presentation_layer.detailScreen.mainPage.ActivateDetailScreen
 import com.project.toko.homeScreen.presentation_layer.homeScreen.MainScreen
-import com.project.toko.noId.presentation_layer.noId.NoId
 import com.project.toko.detailScreen.presentation_layer.detailScreen.sideContent.castList.ShowWholeCast
 import com.project.toko.detailScreen.presentation_layer.detailScreen.sideContent.staffList.ShowWholeStaff
 import com.project.toko.characterDetailedScreen.presentation_layer.characterFull.DisplayCharacterFromId

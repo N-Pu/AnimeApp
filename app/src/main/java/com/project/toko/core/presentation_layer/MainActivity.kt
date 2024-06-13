@@ -15,7 +15,6 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.ImageLoader
-import coil.decode.SvgDecoder
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.project.toko.core.presentation_layer.appConstraction.AppActivator
 import com.project.toko.core.presentation_layer.theme.SplashTheme
