@@ -515,7 +515,7 @@ private fun AnimeCardBox(
                 secondName = data.title_japanese,
                 airedFrom = data.aired.from,
                 type = data.type ?: "N/A",
-                imageLoader = svgImageLoader
+                svgImageLoader = svgImageLoader
             )
 
 
@@ -920,7 +920,7 @@ private fun ShowTopAnime(
                     secondName = data.title_japanese,
                     airedFrom = data.aired.from,
                     type = data.type ?: "N/A",
-                    imageLoader = svgImageLoader
+                    svgImageLoader = svgImageLoader
                 )
             }
             Column(

@@ -1,15 +1,16 @@
 package com.project.toko.core.presentation_layer.navigation
 
-
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import coil.ImageLoader
 import com.project.toko.detailScreen.viewModel.DetailScreenViewModel
 import com.project.toko.detailScreen.presentation_layer.detailScreen.mainPage.ActivateDetailScreen
@@ -30,164 +31,337 @@ fun SetupNavGraph(
     drawerState: DrawerState,
     svgImageLoader: ImageLoader
 ) {
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.HomeSubGraph.route) {
 
-        composable(route = Screen.Home.route) {
-            MainScreen(
-                onNavigateToDetailScreen = { detailScreenId ->
-                    navController.navigate(detailScreenId)
-                    {
-                        launchSingleTop = true
-                    }
-                },
-                modifier = modifier,
-                isInDarkTheme = isInDarkTheme,
-                drawerState = drawerState,
-                svgImageLoader = svgImageLoader
-            )
-        }
-        composable(
-            route = Screen.Detail.route, arguments = listOf(navArgument("id") {
+        // Main Graph
+        navigation(startDestination = Screen.Home.route, route = Screen.HomeSubGraph.route) {
+            composable(route = Screen.Home.route) {
+                MainScreen(
+                    onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    drawerState = drawerState,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+            composable(route = Screen.Detail.route, arguments = listOf(navArgument("id") {
                 type = NavType.IntType
-            })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments!!.getInt("id")
-            ActivateDetailScreen(
-                onNavigateToDetailOnCharacter = { characterId ->
-                    navController.navigate(characterId)
-
-                }, onNavigateToDetailOnStaff = { personId ->
-                    navController.navigate(personId)
-                }, onNavigateToWholeOnStaff = { wholeCastId ->
-                    navController.navigate(wholeCastId)
-
-                }, onNavigateToDetailScreen = { detailScreenId ->
-                    navController.navigate(detailScreenId)
-                    {
-                        launchSingleTop = true
-                    }
-                },
-                id = id,
-                modifier = modifier,
-                isInDarkTheme = isInDarkTheme,
-                svgImageLoader = svgImageLoader
-            )
-        }
-
-        composable(route = Screen.Nothing.route) {
-            NoId()
-        }
-        composable(route = Screen.Favorites.route) {
-            DaoScreen(
-                onNavigateToDetailOnCharacter = { characterId ->
-                    navController.navigate(characterId)
-
-                }, onNavigateToDetailOnStaff = { personId ->
-                    navController.navigate(personId)
-                }, onNavigateToDetailScreen = { detailScreenId ->
-                    navController.navigate(detailScreenId)
-                    {
-                        launchSingleTop = true
-                    }
-                },
-                modifier = modifier,
-                isInDarkTheme = isInDarkTheme,
-                drawerState = drawerState,
-                svgImageLoader = svgImageLoader
-            )
-        }
-        composable(route = Screen.RandomAnimeOrManga.route) {
-            ShowRandomAnime(
-                onNavigateToDetailScreen = { detailScreenId ->
-                    navController.navigate(detailScreenId) {
-                        launchSingleTop = true
-                    }
-                }, modifier = modifier
-            )
-        }
-        composable(route = Screen.DetailOnWholeCast.route) {
-            val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
-            ShowWholeCast(
-                onNavigateToDetailOnCharacter = { characterId ->
-                    navController.navigate(characterId)
-
-                }, onNavigateToDetailOnStaff = { personId ->
-                    navController.navigate(personId)
-                },
-                onNavigateBack = { navController.navigateUp() },
-                detailScreenViewModel,
-                modifier,
-                isInDarkTheme = isInDarkTheme
-            )
-        }
-        composable(route = Screen.DetailOnWholeStaff.route) {
-            val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
-            ShowWholeStaff(
-                onNavigateToDetailOnStaff = { personId ->
-                    navController.navigate(personId)
-                },
-                onNavigateBack = { navController.navigateUp() },
-                detailScreenViewModel,
-                modifier = modifier,
-                isInDarkTheme = isInDarkTheme
-            )
-        }
-        composable(
-            route = Screen.CharacterDetail.route, arguments = listOf(navArgument("id") {
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                ActivateDetailScreen(
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    }, onNavigateToWholeOnStaff = { wholeCastId ->
+                        navController.navigate(wholeCastId)
+                    }, onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    id = id,
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+//            composable(route = Screen.Nothing.route) {
+//                NoId()
+//            }
+            composable(route = Screen.DetailOnWholeCast.route) {
+                val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
+                ShowWholeCast(
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    detailScreenViewModel,
+                    modifier,
+                    isInDarkTheme = isInDarkTheme
+                )
+            }
+            composable(route = Screen.DetailOnWholeStaff.route) {
+                val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
+                ShowWholeStaff(
+                    onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    detailScreenViewModel,
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme
+                )
+            }
+            composable(route = Screen.CharacterDetail.route, arguments = listOf(navArgument("id") {
                 type = NavType.IntType
-            })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments!!.getInt("id")
-            DisplayCharacterFromId(
-                id = id,
-                onNavigateToStaff = { staffId ->
-                    navController.navigate(staffId)
-                },
-                onNavigateToDetailScreen = { detailScreenId ->
-                    navController.navigate(detailScreenId) {
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateBack = {
-                    navController.navigateUp()
-                },
-                modifier = modifier,
-                isInDarkTheme = isInDarkTheme,
-                svgImageLoader = svgImageLoader
-            )
-        }
-        composable(
-            route = Screen.StaffDetail.route, arguments = listOf(navArgument("id") {
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                DisplayCharacterFromId(
+                    id = id,
+                    onNavigateToStaff = { staffId ->
+                        navController.navigate(staffId)
+                    },
+                    onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    },
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+            composable(route = Screen.StaffDetail.route, arguments = listOf(navArgument("id") {
                 type = NavType.IntType
-            })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments!!.getInt("id")
-            DisplayPersonFullScreen(
-                id = id,
-                onNavigateToDetailOnCharacter = { characterId ->
-                    navController.navigate(characterId)
-
-                }, onNavigateToDetailScreen = { detailScreenId ->
-                    navController.navigate(detailScreenId)
-                    {
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateBack = { navController.navigateUp() },
-                modifier = modifier,
-                isInDarkTheme = isInDarkTheme,
-                svgImageLoader = svgImageLoader
-            )
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                DisplayPersonFullScreen(
+                    id = id,
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
         }
 
+        // Dao Graph
+        navigation(startDestination = Screen.Favorites.route, route = Screen.DaoSubGraph.route) {
+            composable(route = Screen.Favorites.route) {
+                DaoScreen(
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    }, onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    drawerState = drawerState,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+            composable(route = Screen.DetailSecond.route, arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                ActivateDetailScreen(
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    }, onNavigateToWholeOnStaff = { wholeCastId ->
+                        navController.navigate(wholeCastId)
+                    }, onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    id = id,
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+//            composable(route = Screen.Nothing.route) {
+//                NoId()
+//            }
+            composable(route = Screen.DetailOnWholeCastSecond.route) {
+                val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
+                ShowWholeCast(
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    detailScreenViewModel,
+                    modifier,
+                    isInDarkTheme = isInDarkTheme
+                )
+            }
+            composable(route = Screen.DetailOnWholeStaffSecond.route) {
+                val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
+                ShowWholeStaff(
+                    onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    detailScreenViewModel,
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme
+                )
+            }
+            composable(route = Screen.CharacterDetailSecond.route, arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                DisplayCharacterFromId(
+                    id = id,
+                    onNavigateToStaff = { staffId ->
+                        navController.navigate(staffId)
+                    },
+                    onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    },
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+            composable(route = Screen.StaffDetailSecond.route, arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                DisplayPersonFullScreen(
+                    id = id,
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+        }
+
+        // Random Anime Graph
+        navigation(
+            startDestination = Screen.RandomAnimeOrManga.route,
+            route = Screen.RandomSubGraph.route
+        ) {
+            composable(route = Screen.RandomAnimeOrManga.route) {
+                ShowRandomAnime(
+                    onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    }, modifier = modifier
+                )
+            }
+            composable(route = Screen.DetailThird.route, arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                ActivateDetailScreen(
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    }, onNavigateToWholeOnStaff = { wholeCastId ->
+                        navController.navigate(wholeCastId)
+                    }, onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    id = id,
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+//            composable(route = Screen.Nothing.route) {
+//                NoId()
+//            }
+            composable(route = Screen.DetailOnWholeCastThird.route) {
+                val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
+                ShowWholeCast(
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    detailScreenViewModel,
+                    modifier,
+                    isInDarkTheme = isInDarkTheme
+                )
+            }
+            composable(route = Screen.DetailOnWholeStaffThird.route) {
+                val detailScreenViewModel: DetailScreenViewModel = hiltViewModel()
+                ShowWholeStaff(
+                    onNavigateToDetailOnStaff = { personId ->
+                        navController.navigate(personId)
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    detailScreenViewModel,
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme
+                )
+            }
+            composable(route = Screen.CharacterDetailThird.route, arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                DisplayCharacterFromId(
+                    id = id,
+                    onNavigateToStaff = { staffId ->
+                        navController.navigate(staffId)
+                    },
+                    onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    },
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+            composable(route = Screen.StaffDetailThird.route, arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })) { backStackEntry ->
+                val id = backStackEntry.arguments!!.getInt("id")
+                DisplayPersonFullScreen(
+                    id = id,
+                    onNavigateToDetailOnCharacter = { characterId ->
+                        navController.navigate(characterId)
+                    }, onNavigateToDetailScreen = { detailScreenId ->
+                        navController.navigate(detailScreenId) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateBack = { navController.navigateUp() },
+                    modifier = modifier,
+                    isInDarkTheme = isInDarkTheme,
+                    svgImageLoader = svgImageLoader
+                )
+            }
+        }
     }
 }
 
-//@Composable
-//inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T {
-//    val navGraphRoute = destination.parent?.route ?: return viewModel()
-//    val parentEntry = remember(this) {
-//        navController.getBackStackEntry(navGraphRoute)
-//    }
-//    return viewModel(parentEntry)
-//}

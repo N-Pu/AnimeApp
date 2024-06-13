@@ -63,6 +63,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.ImageLoader
@@ -126,280 +127,298 @@ fun AppActivator(
 }
 
 
+//@Composable
+//private fun BottomNavigationBar(
+//    navController: NavController,
+//    modifier: Modifier,
+//    imageLoader: ImageLoader,
+//) {
+//    val navBackStackEntry by navController.currentBackStackEntryAsState()
+//    val currentRoute = navBackStackEntry?.destination?.route
+////    val topOfTheSubGraph = navBackStackEntry?.destination?.parent?.route
+//
+//    Row(
+//        modifier
+//            .fillMaxWidth()
+//            .clip(
+//                RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp)
+//            )
+//            .height(50.dp)
+//            .background(MaterialTheme.colorScheme.onBackground),
+//        horizontalArrangement = Arrangement.SpaceAround,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        Column(
+//            modifier = modifier
+//                .fillMaxHeight()
+//                .weight(1f)
+//                .clickable {
+//                    try {
+//                        navController.navigate(Screen.HomeSubGraph.route) {
+//
+//                            // Avoid multiple copies of the same destination when
+//                            // reselecting the same item
+//                            navController.graph.startDestinationRoute?.let { _ ->
+//                                launchSingleTop = true
+//                                // Restore state when reselecting a previously selected item
+//                            }
+//
+//                        }
+//                    } catch (e: Exception) {
+//
+//                        Log.e("CATCH", Screen.Home.route + " " + e.message.toString())
+//
+//                    }
+//                },
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.SpaceAround
+//        ) {
+//            if (currentRoute != Screen.HomeSubGraph.route) {
+//                Image(
+//                    painter = rememberAsyncImagePainter(
+//                        model = R.drawable.home, imageLoader = imageLoader
+//                    ), contentDescription = null, modifier = modifier.size(35.dp),
+//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+//                )
+//            } else {
+//                Image(
+//                    painter = rememberAsyncImagePainter(
+//                        model = R.drawable.homefilled, imageLoader = imageLoader
+//                    ), contentDescription = null, modifier = modifier.size(35.dp),
+//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+//
+//                )
+//            }
+//        }
+//        Column(
+//            modifier = modifier
+//                .fillMaxHeight()
+//                .weight(1f)
+//                .clickable {
+//                    try {
+//                        navController.navigate(Screen.DetailSubGraph.route)
+//                        {
+//                            navController.graph.startDestinationRoute?.let { _ ->
+//                                launchSingleTop = true
+//                            }
+//                        }
+//                    } catch (e: Exception) {
+//                        Log.e("CATCH", Screen.Detail.route + " " + e.message.toString())
+//                    }
+//                },
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.SpaceAround
+//        ) {
+//
+//            if (currentRoute == Screen.DetailSubGraph.route) {
+//                Image(
+//                    painter = rememberAsyncImagePainter(
+//                        model = R.drawable.detailfilled, imageLoader = imageLoader
+//                    ), contentDescription = null, modifier = modifier.size(30.dp),
+//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+//                )
+//            } else {
+//                Image(
+//                    painter = rememberAsyncImagePainter(
+//                        model = R.drawable.detail, imageLoader = imageLoader
+//                    ), contentDescription = null, modifier = modifier.size(30.dp),
+//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+//                )
+//            }
+//        }
+//        Column(
+//            modifier = modifier
+//                .fillMaxHeight()
+//                .weight(1f)
+//                .clickable {
+//                    try {
+//                        navController.navigate(Screen.DaoSubGraph.route) {
+//
+//                            // Avoid multiple copies of the same destination when
+//                            // reselecting the same item
+//                            navController.graph.startDestinationRoute?.let { _ ->
+//                                launchSingleTop = true
+//                                // Restore state when reselecting a previously selected item
+//                            }
+//
+//                        }
+//                    } catch (e: Exception) {
+//
+//                        Log.e("CATCH", Screen.Favorites.route + " " + e.message.toString())
+//
+//                    }
+//                },
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.SpaceAround
+//        ) {
+//            if (currentRoute != Screen.DaoSubGraph.route) {
+//                Image(
+//                    painter = rememberAsyncImagePainter(
+//                        model = R.drawable.bookmarkempty, imageLoader = imageLoader
+//                    ), contentDescription = null, modifier = modifier.size(30.dp),
+//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+//                )
+//            } else {
+//                Image(
+//                    painter = rememberAsyncImagePainter(
+//                        model = R.drawable.bookmarkfilled, imageLoader = imageLoader
+//                    ), contentDescription = null, modifier = modifier.size(30.dp),
+//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+//                )
+//            }
+//        }
+//        Column(
+//            modifier = modifier
+//                .fillMaxHeight()
+//                .weight(1f)
+//                .clickable {
+//                    try {
+//                        navController.navigate(Screen.RandomSubGraph.route) {
+//
+//                            // Avoid multiple copies of the same destination when
+//                            // reselecting the same item
+//                            navController.graph.startDestinationRoute?.let { _ ->
+//                                launchSingleTop = true
+//                                // Restore state when reselecting a previously selected item
+//                            }
+//
+//                        }
+//                    } catch (e: Exception) {
+//
+//                        Log.e(
+//                            "CATCH",
+//                            Screen.RandomAnimeOrManga.route + " " + e.message.toString()
+//                        )
+//
+//                    }
+//                },
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.SpaceAround
+//        ) {
+//            Image(
+//                painter = rememberAsyncImagePainter(
+//                    model = R.drawable.shuffle, imageLoader = imageLoader
+//                ), contentDescription = null, modifier = modifier.size(30.dp),
+//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+//            )
+//        }
+//
+//    }
+//}
+
+
+
 @Composable
 private fun BottomNavigationBar(
     navController: NavController,
     modifier: Modifier,
     imageLoader: ImageLoader,
 ) {
-    var currentDetailScreenId by hiltViewModel<DetailScreenViewModel>().loadedId
-    var characterDetailScreenId by hiltViewModel<CharacterFullByIdViewModel>().loadedId
-    var personDetailScreenId by hiltViewModel<PersonByIdViewModel>().loadedId
-    var lastSelectedScreen by remember { mutableStateOf<String?>(null) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-    var detailScreenButtonIsSelected by remember { mutableStateOf(false) }
-
-
-
-
-    LaunchedEffect(lastSelectedScreen) {
-        navController.addOnDestinationChangedListener { _, destination, arguments ->
-
-            when (destination.route) {
-
-                Screen.Detail.route -> {
-                    currentDetailScreenId = arguments?.getInt("id") ?: 0
-                    lastSelectedScreen = destination.route
-                }
-
-                Screen.Home.route, Screen.RandomAnimeOrManga.route, Screen.Favorites.route -> {
-                }
-
-                else -> {
-                    lastSelectedScreen = destination.route
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(key1 = currentRoute) {
-        detailScreenButtonIsSelected = when (currentRoute) {
-            Screen.Home.route, Screen.Favorites.route, Screen.RandomAnimeOrManga.route -> {
-                false
-            }
-
-            else -> {
-                true
-            }
-        }
-    }
+    val parentRoute = navBackStackEntry?.destination?.parent?.route
 
     Row(
         modifier
             .fillMaxWidth()
-            .clip(
-                RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp)
-            )
+            .clip(RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp))
             .height(50.dp)
             .background(MaterialTheme.colorScheme.onBackground),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = modifier
-                .fillMaxHeight()
-                .weight(1f)
-                .clickable {
-                    try {
-                        navController.navigate(Screen.Home.route) {
+        BottomNavigationItem(
+            imageLoader = imageLoader,
+            modifier = modifier,
+            parentRoute = parentRoute,
+            targetRoute = Screen.HomeSubGraph.route,
+            icon = R.drawable.home,
+            selectedIcon = R.drawable.homefilled,
+            label = "Home",
+            navController = navController
+        )
 
-                            // Avoid multiple copies of the same destination when
-                            // reselecting the same item
-                            navController.graph.startDestinationRoute?.let { _ ->
-                                launchSingleTop = true
-                                // Restore state when reselecting a previously selected item
-                            }
+//        BottomNavigationItem(
+//            imageLoader = imageLoader,
+//            modifier = modifier,
+//            parentRoute = parentRoute,
+//            targetRoute = Screen.DetailSubGraph.route,
+//            icon = R.drawable.detail,
+//            selectedIcon = R.drawable.detailfilled,
+//            label = "Details",
+//            navController = navController
+//        )
 
-                        }
-                    } catch (e: IllegalArgumentException) {
+        BottomNavigationItem(
+            imageLoader = imageLoader,
+            modifier = modifier,
+            parentRoute = parentRoute,
+            targetRoute = Screen.DaoSubGraph.route,
+            icon = R.drawable.bookmarkempty,
+            selectedIcon = R.drawable.bookmarkfilled,
+            label = "Dao",
+            navController = navController
+        )
 
-                        Log.e("CATCH", Screen.Home.route + " " + e.message.toString())
-
-                    }
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
-            if (currentRoute != Screen.Home.route) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = R.drawable.home, imageLoader = imageLoader
-                    ), contentDescription = null, modifier = modifier.size(35.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-                )
-            } else {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = R.drawable.homefilled, imageLoader = imageLoader
-                    ), contentDescription = null, modifier = modifier.size(35.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-
-                )
-            }
-        }
-        Column(
-            modifier = modifier
-                .fillMaxHeight()
-                .weight(1f)
-                .clickable {
-                    try {
-                        when (lastSelectedScreen) {
-                            Screen.Detail.route -> {
-                                navController.navigate("detail_screen/${currentDetailScreenId}") {
-                                    navController.graph.startDestinationRoute?.let { _ ->
-                                        launchSingleTop = true
-                                    }
-                                }
-
-                                Log.d(
-                                    "last stack membor",
-                                    "detail_screen/${currentDetailScreenId}"
-                                )
-                            }
-
-                            Screen.CharacterDetail.route -> {
-                                navController.navigate("detail_on_character/${characterDetailScreenId}") {
-                                    navController.graph.startDestinationRoute?.let { _ ->
-                                        launchSingleTop = true
-                                    }
-                                }
-                                Log.d(
-                                    "last stack membor",
-                                    "detail_on_character/${characterDetailScreenId}"
-                                )
-                            }
-
-                            Screen.StaffDetail.route -> {
-                                navController.navigate("detail_on_staff/${personDetailScreenId}") {
-                                    navController.graph.startDestinationRoute?.let { _ ->
-                                        launchSingleTop = true
-                                    }
-                                }
-                                Log.d(
-                                    "last stack membor",
-                                    "detail_on_staff/${personDetailScreenId}"
-                                )
-                            }
-
-                            Screen.DetailOnWholeStaff.route -> {
-                                navController.navigate(Screen.DetailOnWholeStaff.route) {
-                                    navController.graph.startDestinationRoute?.let { _ ->
-                                        launchSingleTop = true
-                                    }
-                                }
-                                Log.d("last stack membor", Screen.DetailOnWholeStaff.route)
-                            }
-
-                            Screen.DetailOnWholeCast.route -> {
-                                navController.navigate(Screen.DetailOnWholeCast.route) {
-                                    navController.graph.startDestinationRoute?.let { _ ->
-                                        launchSingleTop = true
-                                    }
-                                }
-                                Log.d("last stack membor", Screen.DetailOnWholeCast.route)
-                            }
-
-                            else -> {
-                                navController.navigate(Screen.Nothing.route) {
-                                    launchSingleTop = true
-                                    Log.d("last stack membor", Screen.Nothing.route)
-                                }
-                            }
-                        }
-                    } catch (e: IllegalArgumentException) {
-                        Log.e("CATCH", Screen.Detail.route + " " + e.message.toString())
-                    }
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
-
-            if (detailScreenButtonIsSelected) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = R.drawable.detailfilled, imageLoader = imageLoader
-                    ), contentDescription = null, modifier = modifier.size(30.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-                )
-            } else {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = R.drawable.detail, imageLoader = imageLoader
-                    ), contentDescription = null, modifier = modifier.size(30.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-                )
-            }
-        }
-        Column(
-            modifier = modifier
-                .fillMaxHeight()
-                .weight(1f)
-                .clickable {
-                    try {
-                        navController.navigate(Screen.Favorites.route) {
-
-                            // Avoid multiple copies of the same destination when
-                            // reselecting the same item
-                            navController.graph.startDestinationRoute?.let { _ ->
-                                launchSingleTop = true
-                                // Restore state when reselecting a previously selected item
-                            }
-
-                        }
-                    } catch (e: IllegalArgumentException) {
-
-                        Log.e("CATCH", Screen.Favorites.route + " " + e.message.toString())
-
-                    }
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
-            if (currentRoute != Screen.Favorites.route) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = R.drawable.bookmarkempty, imageLoader = imageLoader
-                    ), contentDescription = null, modifier = modifier.size(30.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-                )
-            } else {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = R.drawable.bookmarkfilled, imageLoader = imageLoader
-                    ), contentDescription = null, modifier = modifier.size(30.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-                )
-            }
-        }
-        Column(
-            modifier = modifier
-                .fillMaxHeight()
-                .weight(1f)
-                .clickable {
-                    try {
-                        navController.navigate(Screen.RandomAnimeOrManga.route) {
-
-                            // Avoid multiple copies of the same destination when
-                            // reselecting the same item
-                            navController.graph.startDestinationRoute?.let { _ ->
-                                launchSingleTop = true
-                                // Restore state when reselecting a previously selected item
-                            }
-
-                        }
-                    } catch (e: IllegalArgumentException) {
-
-                        Log.e(
-                            "CATCH",
-                            Screen.RandomAnimeOrManga.route + " " + e.message.toString()
-                        )
-
-                    }
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(
-                    model = R.drawable.shuffle, imageLoader = imageLoader
-                ), contentDescription = null, modifier = modifier.size(30.dp),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-            )
-        }
-
+        BottomNavigationItem(
+            imageLoader = imageLoader,
+            modifier = modifier,
+            parentRoute = parentRoute,
+            targetRoute = Screen.RandomSubGraph.route,
+            icon = R.drawable.shuffle,
+            selectedIcon = R.drawable.shuffle,
+            label = "Random",
+            navController = navController
+        )
     }
 }
+
+@Composable
+fun BottomNavigationItem(
+    imageLoader: ImageLoader,
+    modifier: Modifier,
+    parentRoute: String?,
+    targetRoute: String,
+    icon: Int,
+    selectedIcon: Int,
+    label: String,
+    navController: NavController
+) {
+    val iconResource = if (parentRoute == targetRoute) selectedIcon else icon
+
+    Column(
+        modifier = modifier
+            .fillMaxHeight()
+            .clickable {
+                try {
+                    // Navigate to the target route and clear the back stack for that route
+                    navController.navigate(targetRoute) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                } catch (e: Exception) {
+                    Log.e("CATCH", "$label ${e.message}")
+                }
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround
+    ) {
+
+        Image(
+            painter = rememberAsyncImagePainter(
+                model = iconResource, imageLoader = imageLoader
+            ),
+            contentDescription = null,
+            modifier = modifier.size(30.dp),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+        )
+    }
+}
+
+
+
 
 
 @Composable
@@ -411,9 +430,9 @@ private fun ShowDrawerContent(
     darkTheme: () -> Boolean,
     svgImageLoader: ImageLoader
 ) {
-    val homeScreenViewModel : HomeScreenViewModel = hiltViewModel()
-    val daoViewModel : DaoViewModel = hiltViewModel()
-    val randomScreenViewModel : RandomAnimeViewModel = hiltViewModel()
+    val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    val daoViewModel: DaoViewModel = hiltViewModel()
+    val randomScreenViewModel: RandomAnimeViewModel = hiltViewModel()
 
     var isHelpFAQOpen by remember { mutableStateOf(false) }
     var isLegalOpen by remember { mutableStateOf(false) }

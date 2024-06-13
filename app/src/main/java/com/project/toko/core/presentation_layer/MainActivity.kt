@@ -23,12 +23,16 @@ import com.project.toko.core.presentation_layer.theme.Theme
 import com.project.toko.core.settings.SaveDarkMode
 import com.project.toko.splashScreen.AnimatedSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
 
     lateinit var navController: NavHostController
+
+    @Inject
+    lateinit var svgImageLoader: ImageLoader
 
     private lateinit var darkTheme: SaveDarkMode
 
@@ -44,9 +48,6 @@ class MainActivity : ComponentActivity() {
         darkTheme.loadData()
 
 
-        val svgImageLoader = ImageLoader.Builder(this).components {
-            add(SvgDecoder.Factory())
-        }.build()
         setContent {
             val systemUiController = rememberSystemUiController(window)
             val splashShown = remember { mutableStateOf(false) }

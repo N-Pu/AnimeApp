@@ -69,15 +69,12 @@ fun AddFavorites(
     secondName: String?,
     airedFrom: String?,
     type: String,
-    imageLoader: ImageLoader
+    svgImageLoader: ImageLoader
 
 ) {
 
     val daoViewModel : DaoViewModel = hiltViewModel()
     var isExpanded by remember { mutableStateOf(false) }
-    val svgImageLoader = ImageLoader.Builder(LocalContext.current).components {
-        add(SvgDecoder.Factory())
-    }.build()
     Box {
         Column(
             horizontalAlignment = Alignment.End,
@@ -188,7 +185,7 @@ fun AddFavorites(
                             .clickable { isExpanded = true },
                         painter = rememberAsyncImagePainter(
                             model = R.drawable.addpluscircle,
-                            imageLoader = imageLoader
+                            imageLoader = svgImageLoader
                         ),
                         contentDescription = "Add circle"
                     )
