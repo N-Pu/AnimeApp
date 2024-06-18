@@ -1,0 +1,42 @@
+package com.project.toko.homeScreen.data.model.newAnimeSearchModel
+import androidx.compose.runtime.Immutable
+import com.google.gson.annotations.SerializedName
+@Immutable
+data class AnimeSearchData(
+    @SerializedName("aired") val aired: com.project.toko.homeScreen.data.model.newAnimeSearchModel.Aired,
+    @SerializedName("airing") val airing: Boolean,
+    @SerializedName("approved") val approved: Boolean,
+    @SerializedName("background") val background: String,
+    @SerializedName("broadcast") val broadcast: com.project.toko.homeScreen.data.model.newAnimeSearchModel.Broadcast,
+    @SerializedName("demographics") val demographics: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Demographic>,
+    @SerializedName("duration") val duration: String,
+    @SerializedName("episodes") val episodes: Int,
+    @SerializedName("explicit_genres") val explicit_genres: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.ExplicitGenre>,
+    @SerializedName("favorites") val favorites: Int,
+    @SerializedName("genres") val genres: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Genre>,
+    @SerializedName("images") val images: com.project.toko.homeScreen.data.model.newAnimeSearchModel.Images,
+    @SerializedName("licensors") val licensors: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Licensor>,
+    @SerializedName("mal_id") val id: Int,
+    @SerializedName("members") val members: Int,
+    @SerializedName("popularity") val popularity: Int,
+    @SerializedName("producers") val producers: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Producer>,
+    @SerializedName("rank") val rank: Int,
+    @SerializedName("rating") val rating: String?,
+    @SerializedName("score") val score: Float,
+    @SerializedName("scored_by") val scored_by: Float,
+    @SerializedName("season") val season: String,
+    @SerializedName("source") val source: String,
+    @SerializedName("status") val status: String,
+    @SerializedName("studios") val studios: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Studio>,
+    @SerializedName("synopsis") val synopsis: String,
+    @SerializedName("themes") val themes: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Theme>,
+    @SerializedName("title") val title: String,
+    @SerializedName("title_english") val title_english: String,
+    @SerializedName("title_japanese") val title_japanese: String,
+    @SerializedName("title_synonyms") val title_synonyms: List<String>,
+    @SerializedName("titles") val titles: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Title>,
+    @SerializedName("trailer") val trailer: com.project.toko.homeScreen.data.model.newAnimeSearchModel.Trailer,
+    @SerializedName("type") val type: String,
+    @SerializedName("url") val url: String,
+    @SerializedName("year") val year: Int
+)
