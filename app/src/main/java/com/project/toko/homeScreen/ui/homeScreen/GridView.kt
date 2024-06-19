@@ -61,7 +61,7 @@ import java.util.Locale
 @Stable
 @Composable
 fun GridAdder(
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier,
     switch: () -> Boolean,
     isInDarkTheme: () -> Boolean,
@@ -127,7 +127,7 @@ fun GridAdder(
 fun SearchScreen(
     viewModel: HomeScreenViewModel,
     newAnimeSearchModel: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     svgImageLoader: ImageLoader
 ) {
     var additionalDataRequested by remember { mutableStateOf(false) }
@@ -175,7 +175,7 @@ fun SearchScreen(
 fun ShowMainScreen(
     modifier: Modifier = Modifier,
     isInDarkTheme: () -> Boolean,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     svgImageLoader: ImageLoader,
     getTrendingAnime: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
     getTopUpcoming: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
@@ -402,7 +402,7 @@ fun ShowMainScreen(
 @Composable
 private fun AnimeCardBox(
     data: com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier,
     svgImageLoader: ImageLoader,
     homeScreenViewModel: HomeScreenViewModel
@@ -441,7 +441,7 @@ private fun AnimeCardBox(
                     isCardClicked = false
                 }
 
-            }) { onNavigateToDetailScreen("detail_screen/${data.id}") },
+            }) { onNavigateToDetailScreen(data.id) },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiaryContainer),
         shape = RectangleShape,
     ) {
@@ -606,7 +606,7 @@ private fun formatScore(float: Float?): String {
 @Composable
 private fun ShowSection(
     data: AnimeItem,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier,
     svgImageLoader: ImageLoader
 ) {
@@ -645,7 +645,7 @@ private fun ShowSection(
                     isCardClicked = false
                 }
 
-            }) { onNavigateToDetailScreen("detail_screen/${data.id}") },
+            }) { data.id?.let { onNavigateToDetailScreen(it) } },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RectangleShape,
     ) {
@@ -795,7 +795,7 @@ private fun ShowSectionName(sectionName: String, modifier: Modifier, isInDarkThe
 @Composable
 private fun ShowTopAnime(
     data: com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier,
     svgImageLoader: ImageLoader
 ) {
@@ -836,7 +836,7 @@ private fun ShowTopAnime(
                 }
 
             }) {
-                onNavigateToDetailScreen("detail_screen/${data.id}")
+                onNavigateToDetailScreen(data.id)
 
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),

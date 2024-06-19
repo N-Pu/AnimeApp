@@ -53,8 +53,8 @@ import com.project.toko.detailScreen.data.model.castModel.VoiceActor
 
 @Composable
 fun ShowWholeCast(
-    onNavigateToDetailOnCharacter: (String) -> Unit,
-    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
     onNavigateBack: () -> Unit,
     viewModel: DetailScreenViewModel,
     modifier: Modifier = Modifier,
@@ -87,7 +87,7 @@ fun ShowWholeCast(
 @Composable
 private fun AddCast(
     castList: com.project.toko.detailScreen.data.model.castModel.CastData,
-    onNavigateToDetailOnCharacter: (String) -> Unit, onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit, onNavigateToDetailOnStaff: (Int) -> Unit,
     modifier: Modifier,
 ) {
     Row(
@@ -126,15 +126,15 @@ private fun CurrentCast(
     characterPainter: AsyncImagePainter,
     voiceActor: com.project.toko.detailScreen.data.model.castModel.VoiceActor,
     data: com.project.toko.detailScreen.data.model.castModel.CastData,
-    onNavigateToDetailOnStaff: (String) -> Unit,
-    onNavigateToDetailOnCharacter: (String) -> Unit
+    onNavigateToDetailOnStaff: (Int) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit
 ) {
 
     val customModifier = if (voiceActor.language == "") {
         modifier
     } else {
         modifier.clickable {
-            onNavigateToDetailOnStaff("detail_on_staff/${voiceActor.person.id}")
+            onNavigateToDetailOnStaff(voiceActor.person.id)
         }
     }
     val svgImageLoader = ImageLoader.Builder(LocalContext.current).components {
@@ -280,7 +280,7 @@ private fun CurrentCast(
                         .fillMaxSize(0.9f)
                         .clip(RoundedCornerShape(2.dp))
                         .clickable {
-                            onNavigateToDetailOnCharacter("detail_on_character/${data.character.id}")
+                            onNavigateToDetailOnCharacter(data.character.id)
                         },
                     contentScale = ContentScale.FillBounds
                 )

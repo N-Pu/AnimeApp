@@ -49,7 +49,7 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
 @Composable
 fun ShowRandomAnime(
-    onNavigateToDetailScreen: (String) -> Unit, modifier: Modifier = Modifier
+    onNavigateToDetailScreen: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
     val randomViewModel: RandomAnimeViewModel = hiltViewModel()
     val daoViewModel: DaoViewModel = hiltViewModel()
@@ -111,7 +111,7 @@ fun ShowRandomAnime(
                                 }
 
                                 Direction.Up -> {
-                                    onNavigateToDetailScreen("detail_screen/${data?.id ?: 0}")
+                                    onNavigateToDetailScreen(data?.id ?: 0)
 
                                 }
 
@@ -183,7 +183,7 @@ fun ShowRandomAnime(
 private fun AnimeCard(
     data: com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData?,
     modifier: Modifier,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     context: Context,
 ) {
 
@@ -194,7 +194,7 @@ private fun AnimeCard(
     val scoreRoundedCornerShape = remember { RoundedCornerShape(bottomEnd = 10.dp) }
     val clickableModifier = Modifier.clickable {
         if (data != null) {
-            onNavigateToDetailScreen("detail_screen/${data.id}")
+            onNavigateToDetailScreen(data.id)
         }
     }
 

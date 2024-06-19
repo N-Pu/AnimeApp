@@ -55,10 +55,10 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ActivateDetailScreen(
-    onNavigateToDetailOnCharacter: (String) -> Unit,
-    onNavigateToDetailOnStaff: (String) -> Unit,
-    onNavigateToWholeOnStaff: (String) -> Unit,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
+    onNavigateToWholeOnStaff: () -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     id: Int,
     modifier: Modifier = Modifier,
     isInDarkTheme: () -> Boolean,

@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Recommendations(
     recommendationsDataList: List<com.project.toko.detailScreen.data.model.recommendationsModel.RecommendationsData>,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean
 ) {
@@ -110,7 +110,7 @@ fun Recommendations(
 @Composable
 fun SingleRecommendationCard(
     modifier: Modifier,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     detailScreenViewModel: DetailScreenViewModel,
     recommendationsData: com.project.toko.detailScreen.data.model.recommendationsModel.RecommendationsData,
     painter: AsyncImagePainter,
@@ -123,7 +123,7 @@ fun SingleRecommendationCard(
             .clip(RoundedCornerShape(16.dp))
             .clickable {
                 detailScreenViewModel.viewModelScope.launch {
-                    onNavigateToDetailScreen("detail_screen/${recommendationsData.entry.id}")
+                    onNavigateToDetailScreen(recommendationsData.entry.id)
                 }
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiaryContainer),

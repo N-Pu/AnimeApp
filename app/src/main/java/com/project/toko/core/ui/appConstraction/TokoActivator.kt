@@ -41,7 +41,9 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,16 +65,18 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.project.toko.R
-import com.project.toko.core.ui.navigation.Screen
 import com.project.toko.core.ui.navigation.SetupNavGraph
 import com.project.toko.core.ui.theme.evolventaBoldFamily
 import com.project.toko.core.domain.util.share.openSite
+import com.project.toko.core.ui.navigation.LeafScreen
+import com.project.toko.core.ui.navigation.RootScreen
 import com.project.toko.daoScreen.ui.daoViewModel.DaoViewModel
 import com.project.toko.daoScreen.data.model.AnimeStatus
 import com.project.toko.homeScreen.ui.viewModel.HomeScreenViewModel
@@ -122,196 +126,13 @@ fun AppActivator(
     }
 }
 
-
-//@Composable
-//private fun BottomNavigationBar(
-//    navController: NavController,
-//    modifier: Modifier,
-//    imageLoader: ImageLoader,
-//) {
-//    val navBackStackEntry by navController.currentBackStackEntryAsState()
-//    val currentRoute = navBackStackEntry?.destination?.route
-////    val topOfTheSubGraph = navBackStackEntry?.destination?.parent?.route
-//
-//    Row(
-//        modifier
-//            .fillMaxWidth()
-//            .clip(
-//                RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp)
-//            )
-//            .height(50.dp)
-//            .background(MaterialTheme.colorScheme.onBackground),
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Column(
-//            modifier = modifier
-//                .fillMaxHeight()
-//                .weight(1f)
-//                .clickable {
-//                    try {
-//                        navController.navigate(Screen.HomeSubGraph.route) {
-//
-//                            // Avoid multiple copies of the same destination when
-//                            // reselecting the same item
-//                            navController.graph.startDestinationRoute?.let { _ ->
-//                                launchSingleTop = true
-//                                // Restore state when reselecting a previously selected item
-//                            }
-//
-//                        }
-//                    } catch (e: Exception) {
-//
-//                        Log.e("CATCH", Screen.Home.route + " " + e.message.toString())
-//
-//                    }
-//                },
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.SpaceAround
-//        ) {
-//            if (currentRoute != Screen.HomeSubGraph.route) {
-//                Image(
-//                    painter = rememberAsyncImagePainter(
-//                        model = R.drawable.home, imageLoader = imageLoader
-//                    ), contentDescription = null, modifier = modifier.size(35.dp),
-//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-//                )
-//            } else {
-//                Image(
-//                    painter = rememberAsyncImagePainter(
-//                        model = R.drawable.homefilled, imageLoader = imageLoader
-//                    ), contentDescription = null, modifier = modifier.size(35.dp),
-//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-//
-//                )
-//            }
-//        }
-//        Column(
-//            modifier = modifier
-//                .fillMaxHeight()
-//                .weight(1f)
-//                .clickable {
-//                    try {
-//                        navController.navigate(Screen.DetailSubGraph.route)
-//                        {
-//                            navController.graph.startDestinationRoute?.let { _ ->
-//                                launchSingleTop = true
-//                            }
-//                        }
-//                    } catch (e: Exception) {
-//                        Log.e("CATCH", Screen.Detail.route + " " + e.message.toString())
-//                    }
-//                },
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.SpaceAround
-//        ) {
-//
-//            if (currentRoute == Screen.DetailSubGraph.route) {
-//                Image(
-//                    painter = rememberAsyncImagePainter(
-//                        model = R.drawable.detailfilled, imageLoader = imageLoader
-//                    ), contentDescription = null, modifier = modifier.size(30.dp),
-//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-//                )
-//            } else {
-//                Image(
-//                    painter = rememberAsyncImagePainter(
-//                        model = R.drawable.detail, imageLoader = imageLoader
-//                    ), contentDescription = null, modifier = modifier.size(30.dp),
-//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-//                )
-//            }
-//        }
-//        Column(
-//            modifier = modifier
-//                .fillMaxHeight()
-//                .weight(1f)
-//                .clickable {
-//                    try {
-//                        navController.navigate(Screen.DaoSubGraph.route) {
-//
-//                            // Avoid multiple copies of the same destination when
-//                            // reselecting the same item
-//                            navController.graph.startDestinationRoute?.let { _ ->
-//                                launchSingleTop = true
-//                                // Restore state when reselecting a previously selected item
-//                            }
-//
-//                        }
-//                    } catch (e: Exception) {
-//
-//                        Log.e("CATCH", Screen.Favorites.route + " " + e.message.toString())
-//
-//                    }
-//                },
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.SpaceAround
-//        ) {
-//            if (currentRoute != Screen.DaoSubGraph.route) {
-//                Image(
-//                    painter = rememberAsyncImagePainter(
-//                        model = R.drawable.bookmarkempty, imageLoader = imageLoader
-//                    ), contentDescription = null, modifier = modifier.size(30.dp),
-//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-//                )
-//            } else {
-//                Image(
-//                    painter = rememberAsyncImagePainter(
-//                        model = R.drawable.bookmarkfilled, imageLoader = imageLoader
-//                    ), contentDescription = null, modifier = modifier.size(30.dp),
-//                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-//                )
-//            }
-//        }
-//        Column(
-//            modifier = modifier
-//                .fillMaxHeight()
-//                .weight(1f)
-//                .clickable {
-//                    try {
-//                        navController.navigate(Screen.RandomSubGraph.route) {
-//
-//                            // Avoid multiple copies of the same destination when
-//                            // reselecting the same item
-//                            navController.graph.startDestinationRoute?.let { _ ->
-//                                launchSingleTop = true
-//                                // Restore state when reselecting a previously selected item
-//                            }
-//
-//                        }
-//                    } catch (e: Exception) {
-//
-//                        Log.e(
-//                            "CATCH",
-//                            Screen.RandomAnimeOrManga.route + " " + e.message.toString()
-//                        )
-//
-//                    }
-//                },
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.SpaceAround
-//        ) {
-//            Image(
-//                painter = rememberAsyncImagePainter(
-//                    model = R.drawable.shuffle, imageLoader = imageLoader
-//                ), contentDescription = null, modifier = modifier.size(30.dp),
-//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-//            )
-//        }
-//
-//    }
-//}
-
-
-
 @Composable
 private fun BottomNavigationBar(
     navController: NavController,
     modifier: Modifier,
     imageLoader: ImageLoader,
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val parentRoute = navBackStackEntry?.destination?.parent?.route
+    val currentSelectedScreen by navController.currentScreenAsState()
 
     Row(
         modifier
@@ -324,49 +145,119 @@ private fun BottomNavigationBar(
     ) {
         BottomNavigationItem(
             imageLoader = imageLoader,
-            modifier = modifier     .weight(1f),
-            parentRoute = parentRoute,
-            targetRoute = Screen.HomeSubGraph.route,
+            modifier = modifier.weight(1f),
             icon = R.drawable.home,
             selectedIcon = R.drawable.homefilled,
-            label = "Home",
-            navController = navController
+            onClick = {
+                navigateToTab(
+                    navController = navController,
+                    rootScreen = RootScreen.HomeSubGraph,
+                    currentSelectedScreen = currentSelectedScreen,
+                    leafScreen = LeafScreen.Home
+                )
+            },
+            isSelected = currentSelectedScreen.route == RootScreen.HomeSubGraph.route
         )
-
-//        BottomNavigationItem(
-//            imageLoader = imageLoader,
-//            modifier = modifier,
-//            parentRoute = parentRoute,
-//            targetRoute = Screen.DetailSubGraph.route,
-//            icon = R.drawable.detail,
-//            selectedIcon = R.drawable.detailfilled,
-//            label = "Details",
-//            navController = navController
-//        )
-
         BottomNavigationItem(
             imageLoader = imageLoader,
-            modifier = modifier     .weight(1f),
-            parentRoute = parentRoute,
-            targetRoute = Screen.DaoSubGraph.route,
+            modifier = modifier.weight(1f),
             icon = R.drawable.bookmarkempty,
             selectedIcon = R.drawable.bookmarkfilled,
-            label = "Dao",
-            navController = navController
+            onClick = {
+                navigateToTab(
+                    navController = navController,
+                    rootScreen = RootScreen.DaoSubGraph,
+                    currentSelectedScreen = currentSelectedScreen,
+                    leafScreen = LeafScreen.Favorites
+                )
+            },
+            isSelected = currentSelectedScreen.route == RootScreen.DaoSubGraph.route
         )
-
         BottomNavigationItem(
             imageLoader = imageLoader,
-            modifier = modifier     .weight(1f),
-            parentRoute = parentRoute,
-            targetRoute = Screen.RandomSubGraph.route,
+            modifier = modifier.weight(1f),
             icon = R.drawable.shuffle,
             selectedIcon = R.drawable.shuffle,
-            label = "Random",
-            navController = navController
+            onClick = {
+                navigateToTab(
+                    navController = navController,
+                    rootScreen = RootScreen.RandomSubGraph,
+                    currentSelectedScreen = currentSelectedScreen,
+                    leafScreen = LeafScreen.RandomAnimeOrManga
+                )
+            },
+            isSelected = currentSelectedScreen.route == RootScreen.RandomSubGraph.route
         )
     }
 }
+
+// if user taps to tab when he's on it - stack pops to the start screen
+private fun navigateToTab(
+    navController: NavController,
+    rootScreen: RootScreen,
+    currentSelectedScreen: RootScreen,
+    leafScreen: LeafScreen
+) {
+    try {
+        if (
+            currentSelectedScreen.route == rootScreen.route
+        ) {
+            navController.navigate(rootScreen.route) {
+                popUpTo(leafScreen.route) {
+                    inclusive = false // исключаем первый экран из удаления
+                }
+                launchSingleTop = true
+            }
+        } else {
+            // Navigate to the target route and clear the back stack for that route
+            navController.navigate(rootScreen.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+        checkBackStack(navController)
+
+    } catch (e: Exception) {
+        Log.e("CATCH", "${rootScreen.route} -> ${e.message}")
+    }
+}
+
+//@Stable
+@Composable
+private fun NavController.currentScreenAsState(): State<RootScreen> {
+
+    val selectedItem = remember { mutableStateOf<RootScreen>(RootScreen.HomeSubGraph) }
+
+    DisposableEffect(key1 = this) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            when {
+                destination.hierarchy.any { it.route == RootScreen.HomeSubGraph.route } -> {
+                    selectedItem.value = RootScreen.HomeSubGraph
+                }
+
+                destination.hierarchy.any { it.route == RootScreen.DaoSubGraph.route } -> {
+                    selectedItem.value = RootScreen.DaoSubGraph
+                }
+
+                destination.hierarchy.any { it.route == RootScreen.RandomSubGraph.route } -> {
+                    selectedItem.value = RootScreen.RandomSubGraph
+                }
+
+            }
+        }
+        addOnDestinationChangedListener(listener)
+        onDispose {
+            removeOnDestinationChangedListener(listener)
+        }
+
+    }
+
+    return selectedItem
+}
+
 @SuppressLint("RestrictedApi")
 private fun checkBackStack(navController: NavController) = run {
     Log.d(
@@ -394,31 +285,20 @@ private fun checkBackStack(navController: NavController) = run {
 fun BottomNavigationItem(
     imageLoader: ImageLoader,
     modifier: Modifier,
-    parentRoute: String?,
-    targetRoute: String,
+//    parentRoute: String?,
+//    targetRoute: String,
     icon: Int,
     selectedIcon: Int,
-    label: String,
-    navController: NavController
+//    label: String,
+//    navController: NavController,
+    onClick: () -> Unit,
+    isSelected: Boolean
 ) {
     Column(
         modifier = modifier
             .fillMaxHeight()
             .clickable {
-                try {
-                    // Navigate to the target route and clear the back stack for that route
-                    navController.navigate(targetRoute) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                    checkBackStack(navController)
-
-                } catch (e: Exception) {
-                    Log.e("CATCH", "$label ${e.message}")
-                }
+                onClick()
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
@@ -426,7 +306,8 @@ fun BottomNavigationItem(
 
         Image(
             painter = rememberAsyncImagePainter(
-                model =  if (parentRoute == targetRoute) selectedIcon else icon, imageLoader = imageLoader
+                model = if (isSelected) selectedIcon else icon,
+                imageLoader = imageLoader
             ),
             contentDescription = null,
             modifier = modifier.size(30.dp),
@@ -435,8 +316,34 @@ fun BottomNavigationItem(
     }
 }
 
+private fun checkSelectedScreen(
+    currentSelectedScreen: RootScreen,
+    leafScreen: LeafScreen,
+    rootScreen: RootScreen,
+    navController: NavController
+) {
+    if (
+        currentSelectedScreen.route == rootScreen.route
+    ) {
+        navController.navigate(rootScreen.route) {
+            popUpTo(leafScreen.route) {
+                inclusive = false // исключаем первый экран из удаления
+            }
 
+            launchSingleTop = true
+        }
+    } else {
+        navController.navigate(rootScreen.route) {
 
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+    checkBackStack(navController)
+}
 
 
 @Composable

@@ -27,7 +27,7 @@ import com.project.toko.core.ui.theme.evolventaBoldFamily
 fun ShowAnimeRelated(
     modifier: Modifier,
     animes: List<com.project.toko.characterDetailedScreen.data.model.characterFullModel.Anime>,
-    onNavigateToDetailScreen: (String) -> Unit
+    onNavigateToDetailScreen: (Int) -> Unit
 ) {
 
     Row(modifier = modifier.padding(start = 20.dp, top = 10.dp)) {
@@ -48,7 +48,7 @@ fun ShowAnimeRelated(
 
                 .clip(CardDefaults.shape)
                 .clickable {
-                    onNavigateToDetailScreen("detail_screen/${animes[i].anime.mal_id}")
+                    onNavigateToDetailScreen(animes[i].anime.mal_id)
                 }) {
                 Column(
                     modifier = modifier

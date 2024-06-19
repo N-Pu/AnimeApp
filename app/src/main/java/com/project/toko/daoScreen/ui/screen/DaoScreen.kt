@@ -95,9 +95,9 @@ import me.saket.swipe.SwipeableActionsBox
 
 @Composable
 fun DaoScreen(
-    onNavigateToDetailOnCharacter: (String) -> Unit,
-    onNavigateToDetailOnStaff: (String) -> Unit,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier = Modifier,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,
@@ -369,7 +369,7 @@ private fun FavoriteAnimeListButton(
 // (watching, planned, watched, dropped)
 @Composable
 private fun DataAnimeList(
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     daoViewModel: DaoViewModel,
     modifier: Modifier,
     isSortedAlphabetically: MutableState<Boolean>,
@@ -555,7 +555,7 @@ private fun DataAnimeList(
 
 @Composable
 private fun FavoriteList(
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     daoViewModel: DaoViewModel,
     modifier: Modifier,
     isSortedAlphabetically: MutableState<Boolean>,
@@ -726,7 +726,7 @@ private fun FavoriteList(
 
 @Composable
 private fun ShowCharacter(
-    onNavigateToDetailOnCharacter: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
     modifier: Modifier,
     daoViewModel: DaoViewModel
 ) {
@@ -774,13 +774,13 @@ private fun ShowCharacter(
 @Composable
 private fun CharacterCardBox(
     characterItem: CharacterItem,
-    onNavigateToDetailOnCharacter: (String) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
     modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(model = characterItem.image)
     Box(modifier = modifier.clickable {
         characterItem.id?.let {
-            onNavigateToDetailOnCharacter("detail_on_character/${it}")
+            onNavigateToDetailOnCharacter(it)
         }
     }) {
         Row {
@@ -829,7 +829,7 @@ private fun CharacterCardBox(
 
 @Composable
 private fun ShowPerson(
-    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
     modifier: Modifier
 ) {
 
@@ -875,7 +875,7 @@ private fun ShowPerson(
 @Composable
 private fun PersonCardBox(
     personItem: PersonItem,
-    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
     modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(model = personItem.image)
@@ -885,7 +885,7 @@ private fun PersonCardBox(
         if (personItem.givenName.isNullOrEmpty()) "Given name: N/A" else "Given name: ${personItem.givenName}"
     Box(modifier = modifier.clickable {
         personItem.id?.let {
-            onNavigateToDetailOnStaff("detail_on_staff/${it}")
+            onNavigateToDetailOnStaff(it)
         }
     }) {
         Row {
@@ -938,7 +938,7 @@ private fun PersonCardBox(
 @Composable
 private fun DataScreenCardBox(
     animeItem: AnimeItem,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(model = animeItem.animeImage)
@@ -955,7 +955,7 @@ private fun DataScreenCardBox(
 
     Column(modifier = modifier.clickable {
         animeItem.id?.let {
-            onNavigateToDetailScreen("detail_screen/${it}")
+            onNavigateToDetailScreen(it)
         }
     }, verticalArrangement = Arrangement.SpaceBetween) {
         Row {
@@ -1085,7 +1085,7 @@ private fun DataScreenCardBox(
 @Composable
 private fun FavoriteScreenCardBox(
     favoriteItem: FavoriteItem,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(model = favoriteItem.animeImage)
@@ -1100,7 +1100,7 @@ private fun FavoriteScreenCardBox(
 
     Column(modifier = modifier.clickable {
         favoriteItem.id?.let {
-            onNavigateToDetailScreen("detail_screen/${it}")
+            onNavigateToDetailScreen(it)
         }
     }, verticalArrangement = Arrangement.SpaceBetween) {
         Row {

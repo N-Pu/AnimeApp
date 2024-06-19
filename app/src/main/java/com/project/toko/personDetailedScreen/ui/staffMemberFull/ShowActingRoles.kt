@@ -29,8 +29,8 @@ import com.project.toko.core.ui.theme.evolventaBoldFamily
 fun ShowAnimeRelated(
     modifier: Modifier,
     voices: List<com.project.toko.personDetailedScreen.data.model.personFullModel.Voice>,
-    onNavigateToDetailScreen: (String) -> Unit,
-    onNavigateToDetailOnCharacter: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
 ) {
 
     Row(modifier = modifier.padding(start = 20.dp, top = 10.dp, bottom = 20.dp)) {
@@ -64,7 +64,7 @@ fun ShowAnimeRelated(
                         modifier = modifier
                             .fillMaxSize()
                             .clickable {
-                                onNavigateToDetailScreen("detail_screen/${voices[i].anime.id}")
+                                onNavigateToDetailScreen(voices[i].anime.id)
                             },
                         alignment = Alignment.Center
                     )
@@ -130,7 +130,7 @@ fun ShowAnimeRelated(
                         modifier = modifier
                             .fillMaxSize()
                             .clickable {
-                                onNavigateToDetailOnCharacter("detail_on_character/${voices[i].character.id}")
+                                onNavigateToDetailOnCharacter(voices[i].character.id)
                             },
                         alignment = Alignment.Center
                     )

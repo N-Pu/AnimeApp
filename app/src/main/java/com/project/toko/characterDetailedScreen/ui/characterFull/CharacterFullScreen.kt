@@ -39,8 +39,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun DisplayCharacterFromId(
     id: Int,
-    onNavigateToStaff: (String) -> Unit,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToStaff: (Int) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier, isInDarkTheme: () -> Boolean, svgImageLoader: ImageLoader
 ) {

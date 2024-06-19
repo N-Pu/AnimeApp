@@ -36,16 +36,15 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.project.toko.R
-import com.project.toko.core.ui.navigation.Screen
+import com.project.toko.core.ui.navigation.LeafScreen
 import com.project.toko.core.ui.theme.evolventaBoldFamily
-import com.project.toko.detailScreen.data.model.staffModel.StaffData
 import java.lang.Integer.min
 
 @Composable
 fun DisplayStaff(
     staffList: List<com.project.toko.detailScreen.data.model.staffModel.StaffData>,
-    onNavigateToDetailOnStaff: (String) -> Unit,
-    onNavigateToWholeOnStaff: (String) -> Unit,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
+    onNavigateToWholeOnStaff: () -> Unit,
     modifier: Modifier
 ) {
     if (staffList.isNotEmpty()) {
@@ -62,8 +61,8 @@ fun DisplayStaff(
 @Composable
 private fun ListEditor(
     listData: List<com.project.toko.detailScreen.data.model.staffModel.StaffData>,
-    onNavigateToDetailStaff: (String) -> Unit,
-    onNavigateToWholeStaff: (String) -> Unit,
+    onNavigateToDetailStaff: (Int) -> Unit,
+    onNavigateToWholeStaff: () -> Unit,
     modifier: Modifier
 ) {
     val minListSize = min(12, listData.size)
@@ -132,7 +131,7 @@ private fun ListEditor(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.onSecondary)
                     .clickable {
-                        onNavigateToWholeStaff(Screen.DetailOnWholeStaff.route)
+                        onNavigateToWholeStaff()
                     }, contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -165,7 +164,7 @@ private fun StaffComponentsCard(
     modifier: Modifier,
     data: com.project.toko.detailScreen.data.model.staffModel.StaffData,
     personPainter: AsyncImagePainter,
-    onNavigateToDetailStaff: (String) -> Unit
+    onNavigateToDetailStaff: (Int) -> Unit
 ) {
     val positions = data.positions.joinToString(separator = ", ")
     Row(
@@ -193,7 +192,7 @@ private fun StaffComponentsCard(
                     .width(70.dp)
                     .height(107.dp)
                     .clickable {
-                        onNavigateToDetailStaff("detail_on_staff/${data.person.id}")
+                        onNavigateToDetailStaff(data.person.id)
                     },
                 contentScale = ContentScale.FillBounds
             )

@@ -51,7 +51,7 @@ import com.project.toko.detailScreen.data.model.staffModel.Person
 
 @Composable
 fun ShowWholeStaff(
-    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
     onNavigateBack: () -> Unit,
     viewModel: DetailScreenViewModel,
     modifier: Modifier = Modifier,
@@ -136,7 +136,7 @@ private fun BackArrow(
 private fun SingleStaffMember(
     person: com.project.toko.detailScreen.data.model.staffModel.Person,
     positions: List<String>,
-    onNavigateToDetailOnStaff: (String) -> Unit,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
     modifier: Modifier
 ) {
 
@@ -154,7 +154,7 @@ private fun SingleStaffMember(
     ) {
 
         Box(modifier = modifier.clickable {
-            onNavigateToDetailOnStaff("detail_on_staff/${person.id}")
+            onNavigateToDetailOnStaff(person.id)
         }) {
             Row {
                 Column(modifier = modifier.padding(vertical = 2.dp, horizontal = 10.dp)) {

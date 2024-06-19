@@ -59,7 +59,7 @@ import kotlinx.coroutines.withContext
 @Stable
 @Composable
 fun MainScreen(
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier = Modifier,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,

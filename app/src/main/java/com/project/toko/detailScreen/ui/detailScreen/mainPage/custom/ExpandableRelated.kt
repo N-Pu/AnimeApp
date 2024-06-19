@@ -49,7 +49,7 @@ private fun ShowRelation(relation: String, modifier: Modifier) {
 private fun CurrentRelation(
     modifier: Modifier,
     entry: com.project.toko.detailScreen.data.model.detailModel.Entry,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
 ) {
 
     if (entry.type != "manga") {
@@ -60,7 +60,7 @@ private fun CurrentRelation(
                 color = MaterialTheme.colorScheme.secondary,
                 text = entry.name + " (" + entry.type + ")",
                 modifier = modifier.clickable {
-                    onNavigateToDetailScreen("detail_screen/${entry.mal_id}")
+                    onNavigateToDetailScreen(entry.mal_id)
                 })
         }
     } else {
@@ -80,7 +80,7 @@ private fun CurrentRelation(
 fun ExpandableRelated(
     relations: List<com.project.toko.detailScreen.data.model.detailModel.Relation>?,
     modifier: Modifier,
-    onNavigateToDetailScreen: (String) -> Unit
+    onNavigateToDetailScreen: (Int) -> Unit
 ) {
     val maxItemsToShow = 2
     var itemsToShow by remember { mutableIntStateOf(maxItemsToShow) }

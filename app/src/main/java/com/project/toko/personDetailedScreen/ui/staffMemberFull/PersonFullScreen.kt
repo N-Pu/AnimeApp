@@ -45,8 +45,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun DisplayPersonFullScreen(
     id: Int,
-    onNavigateToDetailScreen: (String) -> Unit,
-    onNavigateToDetailOnCharacter: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
     onNavigateBack: () -> Unit,
 
     modifier: Modifier = Modifier, isInDarkTheme: () -> Boolean, svgImageLoader: ImageLoader

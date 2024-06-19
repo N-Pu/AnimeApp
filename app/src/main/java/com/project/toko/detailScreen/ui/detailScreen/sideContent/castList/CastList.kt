@@ -50,10 +50,10 @@ import java.lang.Integer.min
 
 @Composable
 fun DisplayCast(
-    castList: List<com.project.toko.detailScreen.data.model.castModel.CastData>,
-    onNavigateToDetailOnStaff: (String) -> Unit,
-    onNavigateToWholeOnStaff: (String) -> Unit,
-    onNavigateToDetailOnCharacter: (String) -> Unit,
+    castList: List<CastData>,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
+    onNavigateToWholeOnStaff: () -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
     modifier: Modifier,
     detailMalId: Int
 ) {
@@ -104,10 +104,10 @@ fun DisplayCast(
 @Stable
 @Composable
 private fun AddCast(
-    castList: List<com.project.toko.detailScreen.data.model.castModel.CastData>,
-    onNavigateToDetailOnStaff: (String) -> Unit,
-    onNavigateToDetailOnCharacter: (String) -> Unit,
-    onNavigateToDetailOnWholeCast: (String) -> Unit,
+    castList: List<CastData>,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit,
+    onNavigateToDetailOnWholeCast: () -> Unit,
     modifier: Modifier,
     numCharacterAndActors: Int,
     detailMalId: Int
@@ -168,7 +168,7 @@ private fun AddCast(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.onSecondary)
                     .clickable {
-                        onNavigateToDetailOnWholeCast("detail_on_whole_cast/${detailMalId}")
+                        onNavigateToDetailOnWholeCast()
                     }, contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -207,17 +207,17 @@ private fun CurrentCast(
     modifier: Modifier,
     personPainter: AsyncImagePainter,
     characterPainter: AsyncImagePainter,
-    voiceActor: com.project.toko.detailScreen.data.model.castModel.VoiceActor,
-    data: com.project.toko.detailScreen.data.model.castModel.CastData,
-    onNavigateToDetailOnStaff: (String) -> Unit,
-    onNavigateToDetailOnCharacter: (String) -> Unit
+    voiceActor: VoiceActor,
+    data: CastData,
+    onNavigateToDetailOnStaff: (Int) -> Unit,
+    onNavigateToDetailOnCharacter: (Int) -> Unit
 ) {
 
     val customModifier = if (voiceActor.language == "") {
         modifier
     } else {
         modifier.clickable {
-            onNavigateToDetailOnStaff("detail_on_staff/${voiceActor.person.id}")
+            onNavigateToDetailOnStaff(voiceActor.person.id)
         }
     }
     val svgImageLoader = ImageLoader.Builder(LocalContext.current).components {
@@ -367,7 +367,7 @@ private fun CurrentCast(
                         .height(107.dp)
                         .clip(RoundedCornerShape(6.dp))
                         .clickable {
-                            onNavigateToDetailOnCharacter("detail_on_character/${data.character.id}")
+                            onNavigateToDetailOnCharacter(data.character.id)
                         },
                     contentScale = ContentScale.Fit // Масштабирование изображения, чтобы вмещалось в квадрат
                 )
@@ -378,23 +378,23 @@ private fun CurrentCast(
     }
 }
 
-private fun hasJapVoiceActor(castList: List<com.project.toko.detailScreen.data.model.castModel.CastData>): List<com.project.toko.detailScreen.data.model.castModel.CastData> {
+private fun hasJapVoiceActor(castList: List<CastData>): List<CastData> {
     return castList.map { data ->
         val japOrFirstVoiceActor = getJapOrFirstVoiceActor(data)
-        com.project.toko.detailScreen.data.model.castModel.CastData(
+        CastData(
             data.character, data.role, listOf(japOrFirstVoiceActor)
         )
     }
 }
 
-private fun getJapOrFirstVoiceActor(data: com.project.toko.detailScreen.data.model.castModel.CastData): com.project.toko.detailScreen.data.model.castModel.VoiceActor {
+private fun getJapOrFirstVoiceActor(data: CastData): VoiceActor {
     return if (data.voice_actors.isNotEmpty()) {
         data.voice_actors.firstOrNull { it.language == "Japanese" } ?: data.voice_actors[0]
     } else {
-        com.project.toko.detailScreen.data.model.castModel.VoiceActor(
-            "", com.project.toko.detailScreen.data.model.castModel.Person(
-                com.project.toko.detailScreen.data.model.castModel.ImagesX(
-                    com.project.toko.detailScreen.data.model.castModel.JpgX(
+        VoiceActor(
+            "", Person(
+                ImagesX(
+                    JpgX(
                         ""
                     )
                 ), 0, "", ""

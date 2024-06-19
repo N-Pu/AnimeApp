@@ -23,7 +23,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.project.toko.core.ui.theme.evolventaBoldFamily
 
 @Composable
-fun ShowVoiceActors(modifier: Modifier, actors: List<com.project.toko.characterDetailedScreen.data.model.characterFullModel.Voice>, onNavigateToStaff: (String) -> Unit) {
+fun ShowVoiceActors(modifier: Modifier, actors: List<com.project.toko.characterDetailedScreen.data.model.characterFullModel.Voice>, onNavigateToStaff: (Int) -> Unit) {
 
     Row(modifier = modifier.padding(start = 20.dp)) {
         Text(
@@ -46,7 +46,7 @@ fun ShowVoiceActors(modifier: Modifier, actors: List<com.project.toko.characterD
             Row(modifier = modifier
                 .clip(CardDefaults.shape)
                 .clickable {
-                    onNavigateToStaff("detail_on_staff/${actors[i].person.mal_id}")
+                    onNavigateToStaff(actors[i].person.mal_id)
                 }) {
                 Column(
                     modifier = modifier

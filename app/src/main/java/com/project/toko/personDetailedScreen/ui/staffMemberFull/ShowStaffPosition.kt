@@ -23,7 +23,11 @@ import coil.compose.rememberAsyncImagePainter
 import com.project.toko.core.ui.theme.evolventaBoldFamily
 
 @Composable
-fun ShowStaffPosition(modifier: Modifier, animes: List<com.project.toko.personDetailedScreen.data.model.personFullModel.Anime>, onNavigateToDetailScreen : (String) -> Unit) {
+fun ShowStaffPosition(
+    modifier: Modifier,
+    animes: List<com.project.toko.personDetailedScreen.data.model.personFullModel.Anime>,
+    onNavigateToDetailScreen: (Int) -> Unit
+) {
 
 
     Row(modifier = modifier.padding(start = 20.dp, top = 10.dp, bottom = 20.dp)) {
@@ -43,7 +47,7 @@ fun ShowStaffPosition(modifier: Modifier, animes: List<com.project.toko.personDe
             Row(modifier = modifier
                 .clip(CardDefaults.shape)
                 .clickable {
-                    onNavigateToDetailScreen("detail_screen/${animes[i].anime.id}")
+                    onNavigateToDetailScreen(animes[i].anime.id)
                 }
             ) {
                 Column(

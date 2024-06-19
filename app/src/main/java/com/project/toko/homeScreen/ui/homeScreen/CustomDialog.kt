@@ -72,7 +72,7 @@ import kotlinx.coroutines.launch
 fun CustomDialog(
     onDismiss: () -> Unit,
     data: com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier,
     isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader
@@ -1086,7 +1086,7 @@ private fun Synopsis(
 
 @Composable
 private fun DisplayDialogPicture(
-    painter: Painter, id: Int, onNavigateToDetailScreen: (String) -> Unit, modifier: Modifier
+    painter: Painter, id: Int, onNavigateToDetailScreen: (Int) -> Unit, modifier: Modifier
 ) {
 
 
@@ -1100,7 +1100,7 @@ private fun DisplayDialogPicture(
             .fillMaxSize()
             .clip(CardDefaults.shape)
             .clickable {
-                onNavigateToDetailScreen("detail_screen/${id}")
+                onNavigateToDetailScreen(id)
             },
         alignment = Alignment.Center,
     )
