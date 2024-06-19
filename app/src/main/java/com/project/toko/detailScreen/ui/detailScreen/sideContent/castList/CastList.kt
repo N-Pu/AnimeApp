@@ -52,7 +52,7 @@ import java.lang.Integer.min
 fun DisplayCast(
     castList: List<CastData>,
     onNavigateToDetailOnStaff: (Int) -> Unit,
-    onNavigateToWholeOnStaff: () -> Unit,
+    onNavigateToWholeOnCast: (Int) -> Unit,
     onNavigateToDetailOnCharacter: (Int) -> Unit,
     modifier: Modifier,
     detailMalId: Int
@@ -92,7 +92,7 @@ fun DisplayCast(
             castList = castWithJapVoiceActors,
             onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
             onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
-            onNavigateToDetailOnWholeCast = onNavigateToWholeOnStaff,
+            onNavigateToDetailOnWholeCast = onNavigateToWholeOnCast,
             modifier = modifier,
             numCharacterAndActors = numCharacterAndActors,
             detailMalId = detailMalId
@@ -107,7 +107,7 @@ private fun AddCast(
     castList: List<CastData>,
     onNavigateToDetailOnStaff: (Int) -> Unit,
     onNavigateToDetailOnCharacter: (Int) -> Unit,
-    onNavigateToDetailOnWholeCast: () -> Unit,
+    onNavigateToDetailOnWholeCast: (Int) -> Unit,
     modifier: Modifier,
     numCharacterAndActors: Int,
     detailMalId: Int
@@ -168,7 +168,7 @@ private fun AddCast(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.onSecondary)
                     .clickable {
-                        onNavigateToDetailOnWholeCast()
+                        onNavigateToDetailOnWholeCast(detailMalId)
                     }, contentAlignment = Alignment.Center
             ) {
                 Image(

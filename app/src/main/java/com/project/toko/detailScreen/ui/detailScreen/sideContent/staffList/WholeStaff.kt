@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,7 +80,7 @@ fun ShowWholeStaff(
 
     }
     BackArrow(
-        modifier, onNavigateBack, viewModel.animeDetails.value?.mal_id ?: 0, isInDarkTheme
+        modifier, onNavigateBack,  isInDarkTheme
     )
 }
 
@@ -87,7 +88,6 @@ fun ShowWholeStaff(
 private fun BackArrow(
     modifier: Modifier,
     onNavigateBack: () -> Unit,
-    detailScreenMalId: Int,
     isInDarkTheme: () -> Boolean
 ) {
     val backArrowFirstColor =

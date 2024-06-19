@@ -29,6 +29,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+//staff
+private val cachedStaffData: MutableMap<Int,StaffModel> = mutableMapOf()
+
+private val _staffList =
+    MutableStateFlow<List<StaffData>>(emptyList())
+
+// cast
+private val cachedCastData: MutableMap<Int, com.project.toko.detailScreen.data.model.castModel.CastModel> = mutableMapOf()
+
+private val _castList =
+    MutableStateFlow<List<com.project.toko.detailScreen.data.model.castModel.CastData>>(emptyList())
+
+
 @HiltViewModel
 class DetailScreenViewModel @Inject constructor(
     private val malApiService: MalApiService
@@ -85,11 +98,7 @@ class DetailScreenViewModel @Inject constructor(
     }
 
 
-    //staff
-    private val cachedStaffData: MutableMap<Int, com.project.toko.detailScreen.data.model.staffModel.StaffModel> = mutableMapOf()
 
-    private val _staffList =
-        MutableStateFlow<List<com.project.toko.detailScreen.data.model.staffModel.StaffData>>(emptyList())
     val staffList = _staffList.asStateFlow()
 
     private suspend fun addStaffFromId(id: Int) {
@@ -119,11 +128,7 @@ class DetailScreenViewModel @Inject constructor(
     }
 
 
-    // cast
-    private val cachedCastData: MutableMap<Int, com.project.toko.detailScreen.data.model.castModel.CastModel> = mutableMapOf()
 
-    private val _castList =
-        MutableStateFlow<List<com.project.toko.detailScreen.data.model.castModel.CastData>>(emptyList())
     val castList = _castList.asStateFlow()
 
     private suspend fun addCastFromId(id: Int) {
