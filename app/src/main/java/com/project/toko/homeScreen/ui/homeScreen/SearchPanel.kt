@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
@@ -63,7 +64,8 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,
-    svgImageLoader: ImageLoader
+    svgImageLoader: ImageLoader,
+    onListState: () -> LazyListState,
 ) {
     val viewModel: HomeScreenViewModel = hiltViewModel()
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
@@ -84,13 +86,7 @@ fun MainScreen(
     }
 
     PullToRefreshLayout(composable = {
-        Column(
-            modifier = modifier
-//            .systemBarsPadding()
-//            .windowInsetsPadding(TopAppBarDefaults.windowInsets)
-                .background(MaterialTheme.colorScheme.primary)
-
-        ) {
+        Column(modifier = modifier.background(MaterialTheme.colorScheme.primary)) {
             Spacer(
                 modifier = modifier
                     .fillMaxWidth()
@@ -218,6 +214,7 @@ fun MainScreen(
                 switch = { switchIndicator.value },
                 isInDarkTheme = isInDarkTheme,
                 svgImageLoader = svgImageLoader,
+                onListState = onListState
             )
 
 

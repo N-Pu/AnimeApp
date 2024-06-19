@@ -5,6 +5,9 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,16 +23,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
@@ -44,9 +50,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +76,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.project.toko.R
@@ -93,6 +100,13 @@ fun AppActivator(
     svgImageLoader: ImageLoader
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val listState = rememberLazyListState()
+    val coroutine = rememberCoroutineScope()
+    val isBottomBarVisible by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+    }
+
+
 
     ModalNavigationDrawer(drawerState = drawerState,
         drawerContent = {
@@ -107,11 +121,34 @@ fun AppActivator(
         }
     ) {
         Scaffold(bottomBar = {
-            BottomNavigationBar(
-                navController = navController,
-                modifier = modifier,
-                imageLoader = svgImageLoader,
-            )
+            AnimatedVisibility(
+                visible = isBottomBarVisible,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                BottomNavigationBar(
+                    navController = navController,
+                    modifier = modifier,
+                    imageLoader = svgImageLoader,
+                )
+            }
+        }, floatingActionButton = {
+            AnimatedVisibility(
+                visible = !isBottomBarVisible,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        coroutine.launch {
+                            listState.scrollToItem(0)
+
+                        }
+                    },
+                ) {
+                    Icon(Icons.Filled.KeyboardArrowUp, "Floating action button.")
+                }
+            }
         },
             content = { padding ->
                 padding.calculateTopPadding()
@@ -119,7 +156,8 @@ fun AppActivator(
                     navController = navController,
                     isInDarkTheme = isInDarkTheme,
                     drawerState = drawerState,
-                    svgImageLoader = svgImageLoader
+                    svgImageLoader = svgImageLoader,
+                    onListState = { listState }
                 )
             }
         )
@@ -285,12 +323,8 @@ private fun checkBackStack(navController: NavController) = run {
 fun BottomNavigationItem(
     imageLoader: ImageLoader,
     modifier: Modifier,
-//    parentRoute: String?,
-//    targetRoute: String,
     icon: Int,
     selectedIcon: Int,
-//    label: String,
-//    navController: NavController,
     onClick: () -> Unit,
     isSelected: Boolean
 ) {
@@ -315,36 +349,6 @@ fun BottomNavigationItem(
         )
     }
 }
-
-private fun checkSelectedScreen(
-    currentSelectedScreen: RootScreen,
-    leafScreen: LeafScreen,
-    rootScreen: RootScreen,
-    navController: NavController
-) {
-    if (
-        currentSelectedScreen.route == rootScreen.route
-    ) {
-        navController.navigate(rootScreen.route) {
-            popUpTo(leafScreen.route) {
-                inclusive = false // исключаем первый экран из удаления
-            }
-
-            launchSingleTop = true
-        }
-    } else {
-        navController.navigate(rootScreen.route) {
-
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
-    }
-    checkBackStack(navController)
-}
-
 
 @Composable
 private fun ShowDrawerContent(

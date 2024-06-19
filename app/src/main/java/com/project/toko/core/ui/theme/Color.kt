@@ -46,7 +46,7 @@ sealed class ThemeColors(
         searchBackground = blackSearchBackground,
         castAndStaffCard = darkCastAndStaffColor,
         addDialog = darkAddDialog,
-        systemBar = blackSearchBackground,
+        systemBar = navBarColorNight,
         systemBarIcon = darkSystemBarUIcon,
         favoriteTopBarDaoItems = darkFavoriteTopBarColors,
         customDialog = darkCustomDialog,
@@ -73,7 +73,7 @@ sealed class ThemeColors(
         searchBackground = lightSearchBackground,
         castAndStaffCard = Color.White,
         addDialog = darkBackground,
-        systemBar = lightSearchBackground,
+        systemBar = navBarColorDay,
         systemBarIcon = lightSystemBarUIcon,
         favoriteTopBarDaoItems = lightFavoriteTopBarColors,
         customDialog = lightCustomDialog,
@@ -147,7 +147,8 @@ object ScoreColors {
     val Yellow = Color(255, 160, 0)
     val Blank = Color(0xFFA2ADB1)
 }
-
+val navBarColorNight = Color(0,0,0)
+val navBarColorDay = Color(255, 255, 255)
 
 // Light
 val DialogColor = Color(0xE5494949)

@@ -1,5 +1,6 @@
 package com.project.toko.core.ui.navigation
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,11 +28,20 @@ fun SetupNavGraph(
     navController: NavHostController,
     isInDarkTheme: () -> Boolean,
     drawerState: DrawerState,
-    svgImageLoader: ImageLoader
+    svgImageLoader: ImageLoader,
+    onListState: () -> LazyListState,
+
 ) {
     NavHost(navController = navController, startDestination = RootScreen.HomeSubGraph.route) {
 
-        homeSubGraph(navController, drawerState, svgImageLoader, isInDarkTheme)
+        homeSubGraph(
+            navController,
+            drawerState,
+            svgImageLoader,
+            isInDarkTheme,
+            onListState,
+
+        )
         daoSubGraph(navController, drawerState, svgImageLoader, isInDarkTheme)
         randomSubGraph(navController, svgImageLoader, isInDarkTheme)
 
@@ -39,8 +49,11 @@ fun SetupNavGraph(
 }
 
 private fun NavGraphBuilder.homeSubGraph(
-    navController: NavController, drawerState: DrawerState,
-    svgImageLoader: ImageLoader, isInDarkTheme: () -> Boolean,
+    navController: NavController,
+    drawerState: DrawerState,
+    svgImageLoader: ImageLoader,
+    isInDarkTheme: () -> Boolean,
+    onListState: () -> LazyListState,
 ) {
     // Main Graph
     navigation(startDestination = LeafScreen.Home.route, route = RootScreen.HomeSubGraph.route) {
@@ -53,7 +66,8 @@ private fun NavGraphBuilder.homeSubGraph(
                 },
                 isInDarkTheme = isInDarkTheme,
                 drawerState = drawerState,
-                svgImageLoader = svgImageLoader
+                svgImageLoader = svgImageLoader,
+                onListState = onListState,
             )
         }
         composable(route = LeafScreen.DetailHome.route, arguments = listOf(navArgument("id") {
