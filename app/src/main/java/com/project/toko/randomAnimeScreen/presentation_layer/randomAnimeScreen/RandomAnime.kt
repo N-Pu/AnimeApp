@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
@@ -34,15 +33,13 @@ import com.alexstyl.swipeablecard.Direction
 import com.alexstyl.swipeablecard.ExperimentalSwipeableCardApi
 import com.alexstyl.swipeablecard.rememberSwipeableCardState
 import com.alexstyl.swipeablecard.swipableCard
-import com.project.toko.core.utils.connectionCheck.isInternetAvailable
-import com.project.toko.daoScreen.dao.AnimeItem
-import com.project.toko.randomAnimeScreen.viewModel.RandomAnimeViewModel
-import com.project.toko.homeScreen.presentation_layer.homeScreen.navigateToDetailScreen
-import com.project.toko.core.presentation_layer.theme.DialogColor
-import com.project.toko.core.presentation_layer.theme.evolventaBoldFamily
-import com.project.toko.daoScreen.daoViewModel.DaoViewModel
-import com.project.toko.daoScreen.model.AnimeStatus
-import com.project.toko.homeScreen.model.newAnimeSearchModel.AnimeSearchData
+import com.project.toko.core.domain.util.connectionCheck.isInternetAvailable
+import com.project.toko.daoScreen.data.dao.AnimeItem
+import com.project.toko.randomAnimeScreen.presentation_layer.viewModel.RandomAnimeViewModel
+import com.project.toko.core.ui.theme.DialogColor
+import com.project.toko.core.ui.theme.evolventaBoldFamily
+import com.project.toko.daoScreen.ui.daoViewModel.DaoViewModel
+import com.project.toko.daoScreen.data.model.AnimeStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -52,7 +49,7 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
 @Composable
 fun ShowRandomAnime(
-    onNavigateToDetailScreen: (String) -> Unit, modifier: Modifier
+    onNavigateToDetailScreen: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
     val randomViewModel: RandomAnimeViewModel = hiltViewModel()
     val daoViewModel: DaoViewModel = hiltViewModel()
@@ -114,7 +111,7 @@ fun ShowRandomAnime(
                                 }
 
                                 Direction.Up -> {
-                                    onNavigateToDetailScreen("detail_screen/${data?.id ?: 0}")
+                                    onNavigateToDetailScreen(data?.id ?: 0)
 
                                 }
 
@@ -184,9 +181,9 @@ fun ShowRandomAnime(
 
 @Composable
 private fun AnimeCard(
-    data: AnimeSearchData?,
+    data: com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData?,
     modifier: Modifier,
-    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToDetailScreen: (Int) -> Unit,
     context: Context,
 ) {
 
@@ -197,7 +194,7 @@ private fun AnimeCard(
     val scoreRoundedCornerShape = remember { RoundedCornerShape(bottomEnd = 10.dp) }
     val clickableModifier = Modifier.clickable {
         if (data != null) {
-            onNavigateToDetailScreen("detail_screen/${data.id}")
+            onNavigateToDetailScreen(data.id)
         }
     }
 
@@ -453,7 +450,7 @@ private fun ColoredBox(
 
 @Composable
 private fun DisplayCustomGenres(
-    genres: List<com.project.toko.homeScreen.model.newAnimeSearchModel.Genre>, modifier: Modifier
+    genres: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Genre>, modifier: Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center

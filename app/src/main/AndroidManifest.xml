@@ -16,7 +16,7 @@
         tools:ignore="ScopedStorage" />
 
     <application
-        android:name = ".core.di.Application"
+        android:name = ".core.domain.di.Application"
         android:versionCode="14"
         android:versionName="1.13"
         android:windowSoftInputMode="adjustResize"
@@ -32,7 +32,7 @@
         android:theme="@style/Theme.Toko.BarColors"
         tools:targetApi="tiramisu">
         <activity
-            android:name=".core.presentation_layer.MainActivity"
+            android:name=".core.ui.main.MainActivity"
             android:exported="true"
             >
             <intent-filter>

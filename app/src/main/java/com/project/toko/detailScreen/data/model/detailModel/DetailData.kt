@@ -1,0 +1,47 @@
+
+package com.project.toko.detailScreen.data.model.detailModel
+import androidx.compose.runtime.Immutable
+import com.google.gson.annotations.SerializedName
+@Immutable
+data class DetailData(
+    @SerializedName("aired") val aired: com.project.toko.detailScreen.data.model.detailModel.Aired,
+    @SerializedName("airing") val airing: Boolean,
+    @SerializedName("approved") val approved: Boolean,
+    @SerializedName("background") val background: String,
+    @SerializedName("broadcast") val broadcast: com.project.toko.detailScreen.data.model.detailModel.Broadcast,
+    @SerializedName("demographics") val demographics: List<com.project.toko.detailScreen.data.model.detailModel.Demographic>,
+    @SerializedName("duration") val duration: String,
+    @SerializedName("episodes") val episodes: Int,
+    @SerializedName("explicit_genres") val explicit_genres: List<com.project.toko.detailScreen.data.model.detailModel.ExplicitGenre>,
+    @SerializedName("external") val external: List<com.project.toko.detailScreen.data.model.detailModel.External>,
+    @SerializedName("favorites") val favorites: Int,
+    @SerializedName("genres") val genres: List<com.project.toko.detailScreen.data.model.detailModel.Genre>,
+    @SerializedName("images") val images: com.project.toko.detailScreen.data.model.detailModel.Images,
+    @SerializedName("licensors") val licensors: List<com.project.toko.detailScreen.data.model.detailModel.Licensor>,
+    @SerializedName("mal_id") val mal_id: Int,
+    @SerializedName("members") val members: Int,
+    @SerializedName("popularity") val popularity: Int,
+    @SerializedName("producers") val producers: List<com.project.toko.detailScreen.data.model.detailModel.Producer>,
+    @SerializedName("rank") val rank: Int,
+    @SerializedName("rating") val rating: String,
+    @SerializedName("relations") val relations: List<com.project.toko.detailScreen.data.model.detailModel.Relation>,
+    @SerializedName("score") val score: Float,
+    @SerializedName("scored_by") val scored_by: Float,
+    @SerializedName("season") val season: String,
+    @SerializedName("source") val source: String,
+    @SerializedName("status") val status: String,
+    @SerializedName("streaming") val streaming: List<com.project.toko.detailScreen.data.model.detailModel.Streaming>,
+    @SerializedName("studios") val studios: List<com.project.toko.detailScreen.data.model.detailModel.Studio>,
+    @SerializedName("synopsis") val synopsis: String,
+    @SerializedName("theme") val theme: com.project.toko.detailScreen.data.model.detailModel.Theme,
+    @SerializedName("themes") val themes: List<com.project.toko.detailScreen.data.model.detailModel.ThemeX>,
+    @SerializedName("title") val title: String,
+    @SerializedName("title_english") val title_english: String,
+    @SerializedName("title_japanese") val title_japanese: String,
+    @SerializedName("title_synonyms") val title_synonyms: List<String>,
+    @SerializedName("titles") val titles: List<com.project.toko.detailScreen.data.model.detailModel.Title>,
+    @SerializedName("trailer") val trailer: com.project.toko.detailScreen.data.model.detailModel.Trailer,
+    @SerializedName("type") val type: String,
+    @SerializedName("url") val url: String,
+    @SerializedName("year") val year: Int
+)

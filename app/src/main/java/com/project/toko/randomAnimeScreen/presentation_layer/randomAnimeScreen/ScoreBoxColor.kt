@@ -3,9 +3,9 @@ package com.project.toko.randomAnimeScreen.presentation_layer.randomAnimeScreen
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.project.toko.core.presentation_layer.theme.Blank
-import com.project.toko.core.presentation_layer.theme.ScoreColors.Red
-import com.project.toko.core.presentation_layer.theme.Yellow
+import com.project.toko.core.ui.theme.Blank
+import com.project.toko.core.ui.theme.ScoreColors.Red
+import com.project.toko.core.ui.theme.Yellow
 
 
 @Composable
