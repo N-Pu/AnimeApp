@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +46,6 @@ import com.project.toko.core.ui.theme.DarkBackArrowCastColor
 import com.project.toko.core.ui.theme.DarkBackArrowSecondCastColor
 import com.project.toko.core.ui.theme.evolventaBoldFamily
 import com.project.toko.detailScreen.ui.viewModel.DetailScreenViewModel
-import com.project.toko.detailScreen.data.model.staffModel.Person
 
 
 @Composable

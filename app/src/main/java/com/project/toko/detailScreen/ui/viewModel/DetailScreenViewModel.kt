@@ -12,11 +12,6 @@ import androidx.lifecycle.viewModelScope
 import com.project.toko.core.domain.repository.MalApiService
 import com.project.toko.core.domain.util.connectionCheck.isInternetAvailable
 import com.project.toko.detailScreen.data.model.castModel.CastData
-import com.project.toko.detailScreen.data.model.castModel.CastModel
-import com.project.toko.detailScreen.data.model.detailModel.DetailData
-import com.project.toko.detailScreen.data.model.detailModel.DetailScreenModel
-import com.project.toko.detailScreen.data.model.pictureModel.DetailPicturesData
-import com.project.toko.detailScreen.data.model.recommendationsModel.RecommendationsData
 import com.project.toko.detailScreen.data.model.staffModel.StaffData
 import com.project.toko.detailScreen.data.model.staffModel.StaffModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +34,7 @@ private val _staffList =
 private val cachedCastData: MutableMap<Int, com.project.toko.detailScreen.data.model.castModel.CastModel> = mutableMapOf()
 
 private val _castList =
-    MutableStateFlow<List<com.project.toko.detailScreen.data.model.castModel.CastData>>(emptyList())
+    MutableStateFlow<List<CastData>>(emptyList())
 
 
 @HiltViewModel
