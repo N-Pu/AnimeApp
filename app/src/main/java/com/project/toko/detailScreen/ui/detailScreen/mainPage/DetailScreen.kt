@@ -59,6 +59,7 @@ fun ActivateDetailScreen(
     onNavigateToDetailOnStaff: (Int) -> Unit,
     onNavigateToWholeOnStaff: () -> Unit,
     onNavigateToDetailScreen: (Int) -> Unit,
+    onNavigateToDetailOnWholeCast: (Int) -> Unit,
     id: Int,
     modifier: Modifier = Modifier,
     isInDarkTheme: () -> Boolean,
@@ -213,7 +214,7 @@ fun ActivateDetailScreen(
                         castList = castData,
                         onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
                         onNavigateToDetailOnStaff = onNavigateToDetailOnStaff,
-                        onNavigateToWholeOnStaff = onNavigateToWholeOnStaff,
+                        onNavigateToWholeOnCast = onNavigateToDetailOnWholeCast,
                         modifier = modifier,
                         detailMalId = viewModel.loadedId.intValue
                     )

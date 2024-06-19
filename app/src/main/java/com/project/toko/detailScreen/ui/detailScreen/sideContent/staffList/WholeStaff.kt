@@ -46,7 +46,6 @@ import com.project.toko.core.ui.theme.DarkBackArrowCastColor
 import com.project.toko.core.ui.theme.DarkBackArrowSecondCastColor
 import com.project.toko.core.ui.theme.evolventaBoldFamily
 import com.project.toko.detailScreen.ui.viewModel.DetailScreenViewModel
-import com.project.toko.detailScreen.data.model.staffModel.Person
 
 
 @Composable
@@ -79,7 +78,7 @@ fun ShowWholeStaff(
 
     }
     BackArrow(
-        modifier, onNavigateBack, viewModel.animeDetails.value?.mal_id ?: 0, isInDarkTheme
+        modifier, onNavigateBack,  isInDarkTheme
     )
 }
 
@@ -87,7 +86,6 @@ fun ShowWholeStaff(
 private fun BackArrow(
     modifier: Modifier,
     onNavigateBack: () -> Unit,
-    detailScreenMalId: Int,
     isInDarkTheme: () -> Boolean
 ) {
     val backArrowFirstColor =

@@ -60,7 +60,9 @@ private fun NavGraphBuilder.homeSubGraph(
             type = NavType.IntType
         })) { backStackEntry ->
             val id = backStackEntry.arguments!!.getInt("id")
-            ActivateDetailScreen(
+            ActivateDetailScreen(onNavigateToDetailOnWholeCast = { id ->
+                navController.navigate("detail_on_whole_cast_home/$id")
+            },
                 onNavigateToDetailOnCharacter = { characterId ->
                     navController.navigate("detail_on_character_home/$characterId")
                 }, onNavigateToDetailOnStaff = { personId ->
@@ -175,7 +177,9 @@ private fun NavGraphBuilder.daoSubGraph(
             type = NavType.IntType
         })) { backStackEntry ->
             val id = backStackEntry.arguments!!.getInt("id")
-            ActivateDetailScreen(
+            ActivateDetailScreen(onNavigateToDetailOnWholeCast = { id ->
+                navController.navigate("detail_on_whole_cast_dao/$id")
+            },
                 onNavigateToDetailOnCharacter = { characterId ->
                     navController.navigate("detail_on_character_dao/$characterId")
                 }, onNavigateToDetailOnStaff = { personId ->
@@ -283,7 +287,9 @@ fun NavGraphBuilder.randomSubGraph(
             type = NavType.IntType
         })) { backStackEntry ->
             val id = backStackEntry.arguments!!.getInt("id")
-            ActivateDetailScreen(
+            ActivateDetailScreen(onNavigateToDetailOnWholeCast = { id ->
+                navController.navigate("detail_on_whole_cast_random/$id")
+            },
                 onNavigateToDetailOnCharacter = { characterId ->
                     navController.navigate("detail_on_character_random/$characterId")
                 }, onNavigateToDetailOnStaff = { personId ->

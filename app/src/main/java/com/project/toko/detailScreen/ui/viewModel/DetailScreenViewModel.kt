@@ -12,11 +12,6 @@ import androidx.lifecycle.viewModelScope
 import com.project.toko.core.domain.repository.MalApiService
 import com.project.toko.core.domain.util.connectionCheck.isInternetAvailable
 import com.project.toko.detailScreen.data.model.castModel.CastData
-import com.project.toko.detailScreen.data.model.castModel.CastModel
-import com.project.toko.detailScreen.data.model.detailModel.DetailData
-import com.project.toko.detailScreen.data.model.detailModel.DetailScreenModel
-import com.project.toko.detailScreen.data.model.pictureModel.DetailPicturesData
-import com.project.toko.detailScreen.data.model.recommendationsModel.RecommendationsData
 import com.project.toko.detailScreen.data.model.staffModel.StaffData
 import com.project.toko.detailScreen.data.model.staffModel.StaffModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +23,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
+//staff
+private val cachedStaffData: MutableMap<Int,StaffModel> = mutableMapOf()
+
+private val _staffList =
+    MutableStateFlow<List<StaffData>>(emptyList())
+
+// cast
+private val cachedCastData: MutableMap<Int, com.project.toko.detailScreen.data.model.castModel.CastModel> = mutableMapOf()
+
+private val _castList =
+    MutableStateFlow<List<CastData>>(emptyList())
+
 
 @HiltViewModel
 class DetailScreenViewModel @Inject constructor(
@@ -85,11 +93,7 @@ class DetailScreenViewModel @Inject constructor(
     }
 
 
-    //staff
-    private val cachedStaffData: MutableMap<Int, com.project.toko.detailScreen.data.model.staffModel.StaffModel> = mutableMapOf()
 
-    private val _staffList =
-        MutableStateFlow<List<com.project.toko.detailScreen.data.model.staffModel.StaffData>>(emptyList())
     val staffList = _staffList.asStateFlow()
 
     private suspend fun addStaffFromId(id: Int) {
@@ -119,11 +123,7 @@ class DetailScreenViewModel @Inject constructor(
     }
 
 
-    // cast
-    private val cachedCastData: MutableMap<Int, com.project.toko.detailScreen.data.model.castModel.CastModel> = mutableMapOf()
 
-    private val _castList =
-        MutableStateFlow<List<com.project.toko.detailScreen.data.model.castModel.CastData>>(emptyList())
     val castList = _castList.asStateFlow()
 
     private suspend fun addCastFromId(id: Int) {
