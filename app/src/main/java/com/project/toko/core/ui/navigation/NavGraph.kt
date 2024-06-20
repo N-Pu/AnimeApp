@@ -30,6 +30,7 @@ fun SetupNavGraph(
     drawerState: DrawerState,
     svgImageLoader: ImageLoader,
     onListState: () -> LazyListState,
+    isBottomBarVisible: () -> Boolean
 
 ) {
     NavHost(navController = navController, startDestination = RootScreen.HomeSubGraph.route) {
@@ -40,6 +41,7 @@ fun SetupNavGraph(
             svgImageLoader,
             isInDarkTheme,
             onListState,
+            isBottomBarVisible
 
         )
         daoSubGraph(navController, drawerState, svgImageLoader, isInDarkTheme)
@@ -54,6 +56,7 @@ private fun NavGraphBuilder.homeSubGraph(
     svgImageLoader: ImageLoader,
     isInDarkTheme: () -> Boolean,
     onListState: () -> LazyListState,
+    isBottomBarVisible: () ->Boolean
 ) {
     // Main Graph
     navigation(startDestination = LeafScreen.Home.route, route = RootScreen.HomeSubGraph.route) {
@@ -68,6 +71,7 @@ private fun NavGraphBuilder.homeSubGraph(
                 drawerState = drawerState,
                 svgImageLoader = svgImageLoader,
                 onListState = onListState,
+                isBottomBarVisable = isBottomBarVisible
             )
         }
         composable(route = LeafScreen.DetailHome.route, arguments = listOf(navArgument("id") {

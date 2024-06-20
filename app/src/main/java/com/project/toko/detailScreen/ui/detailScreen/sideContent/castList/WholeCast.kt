@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,7 +72,7 @@ fun ShowWholeCast(
         modifier = modifier.background(MaterialTheme.colorScheme.primary)
     ) {
         item { Spacer(modifier = modifier.height(70.dp)) }
-        itemsIndexed(castWithJapVoiceActors) { _, data ->
+        items(castWithJapVoiceActors, key = { data -> data.character.id }) { data ->
             AddCast(
                 castList = data,
                 onNavigateToDetailOnCharacter = onNavigateToDetailOnCharacter,
@@ -83,6 +85,7 @@ fun ShowWholeCast(
 
     BackArrow(modifier, onNavigateBack, viewModel.loadedId.intValue, isInDarkTheme = isInDarkTheme)
 }
+
 
 @Composable
 private fun AddCast(

@@ -66,7 +66,9 @@ fun ShowWholeStaff(
         modifier = modifier.background(MaterialTheme.colorScheme.primary)
     ) {
         item { Spacer(modifier = modifier.height(70.dp)) }
-        items(staffState) { data ->
+        items(staffState, key = { data ->
+            data.person.id
+        }) { data ->
             SingleStaffMember(
                 person = data.person,
                 positions = data.positions,
@@ -78,7 +80,7 @@ fun ShowWholeStaff(
 
     }
     BackArrow(
-        modifier, onNavigateBack,  isInDarkTheme
+        modifier, onNavigateBack, isInDarkTheme
     )
 }
 

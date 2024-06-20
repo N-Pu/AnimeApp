@@ -48,6 +48,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -71,6 +72,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -84,6 +86,7 @@ import com.project.toko.core.ui.theme.evolventaBoldFamily
 import com.project.toko.core.domain.util.share.openSite
 import com.project.toko.core.ui.navigation.LeafScreen
 import com.project.toko.core.ui.navigation.RootScreen
+import com.project.toko.core.ui.navigation.navigateToTab
 import com.project.toko.daoScreen.ui.daoViewModel.DaoViewModel
 import com.project.toko.daoScreen.data.model.AnimeStatus
 import com.project.toko.homeScreen.ui.viewModel.HomeScreenViewModel
@@ -100,13 +103,22 @@ fun AppActivator(
     svgImageLoader: ImageLoader
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+//    val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
     val listState = rememberLazyListState()
-    val coroutine = rememberCoroutineScope()
+
     val isBottomBarVisible by remember {
-        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+        derivedStateOf {
+                listState.firstVisibleItemIndex == 0
+
+        }
     }
 
-
+//    val isBottomBarVisible = remember {
+//        derivedStateOf {
+//            homeScreenViewModel.switchIndicator.value || listState.firstVisibleItemIndex == 0
+//
+//        }
+//    }
 
     ModalNavigationDrawer(drawerState = drawerState,
         drawerContent = {
@@ -133,22 +145,6 @@ fun AppActivator(
                 )
             }
         }, floatingActionButton = {
-            AnimatedVisibility(
-                visible = !isBottomBarVisible,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        coroutine.launch {
-                            listState.scrollToItem(0)
-
-                        }
-                    },
-                ) {
-                    Icon(Icons.Filled.KeyboardArrowUp, "Floating action button.")
-                }
-            }
         },
             content = { padding ->
                 padding.calculateTopPadding()
@@ -157,7 +153,8 @@ fun AppActivator(
                     isInDarkTheme = isInDarkTheme,
                     drawerState = drawerState,
                     svgImageLoader = svgImageLoader,
-                    onListState = { listState }
+                    onListState = { listState },
+                    isBottomBarVisible = { isBottomBarVisible }
                 )
             }
         )
@@ -229,39 +226,6 @@ private fun BottomNavigationBar(
     }
 }
 
-// if user taps to tab when he's on it - stack pops to the start screen
-private fun navigateToTab(
-    navController: NavController,
-    rootScreen: RootScreen,
-    currentSelectedScreen: RootScreen,
-    leafScreen: LeafScreen
-) {
-    try {
-        if (
-            currentSelectedScreen.route == rootScreen.route
-        ) {
-            navController.navigate(rootScreen.route) {
-                popUpTo(leafScreen.route) {
-                    inclusive = false // исключаем первый экран из удаления
-                }
-                launchSingleTop = true
-            }
-        } else {
-            // Navigate to the target route and clear the back stack for that route
-            navController.navigate(rootScreen.route) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
-        checkBackStack(navController)
-
-    } catch (e: Exception) {
-        Log.e("CATCH", "${rootScreen.route} -> ${e.message}")
-    }
-}
 
 //@Stable
 @Composable
@@ -296,28 +260,8 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
     return selectedItem
 }
 
-@SuppressLint("RestrictedApi")
-private fun checkBackStack(navController: NavController) = run {
-    Log.d(
-        "root destination parent ->",
-        navController.graph.findStartDestination().parent?.route.toString()
-    )
-    Log.d(
-        "root destination ->",
-        navController.graph.findStartDestination().route.toString()
-    )
-    Log.d(
-        "currentBackStack -> -----------------------------------------------",
-        "------------------------"
-    )
-    navController.currentBackStack.value.forEach {
-        Log.d("currentBackStack -> ", it.destination.route + " - " + it.id)
-    }
-    Log.d(
-        "currentBackStack -> -----------------------------------------------",
-        "------------------------"
-    )
-}
+
+
 
 @Composable
 fun BottomNavigationItem(

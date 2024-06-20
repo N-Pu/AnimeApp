@@ -151,6 +151,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _switchIndicator = mutableStateOf(false)
     val switchIndicator = _switchIndicator
+    fun toggleSwitch() {
+        _switchIndicator.value = !_switchIndicator.value
+    }
 
     private val _isTabMenuOpen = mutableStateOf(false)
     val isTabMenuOpen = _isTabMenuOpen

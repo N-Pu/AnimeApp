@@ -66,18 +66,18 @@ fun MainScreen(
     drawerState: DrawerState,
     svgImageLoader: ImageLoader,
     onListState: () -> LazyListState,
+    isBottomBarVisable: () -> Boolean
 ) {
     val viewModel: HomeScreenViewModel = hiltViewModel()
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
-    val switchIndicator = remember { viewModel.switchIndicator }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val swipeRefreshState =
         rememberSwipeRefreshState(isRefreshing = viewModel.isLoadingSearch.value)
 
-    LaunchedEffect(key1 = switchIndicator.value) {
+    LaunchedEffect(key1 = viewModel.switchIndicator.value) {
         withContext(Dispatchers.IO) {
-            if (switchIndicator.value.not()) {
+            if (viewModel.switchIndicator.value.not()) {
                 viewModel.loadAllSections(context)
                 return@withContext
             }
@@ -135,37 +135,6 @@ fun MainScreen(
                         ),
                     verticalAlignment = Alignment.Bottom
                 ) {
-
-//                DockedSearchBar(
-//                    placeholder = { Text(text = "Search...") },
-//                    query = searchText ?: "",
-//                    onQueryChange = viewModel::onSearchTextChange,
-//                    onSearch = {active = false},
-//                    active = active,
-//                    onActiveChange = {active = it}, trailingIcon = {
-//                        Image(
-//                            painter = rememberAsyncImagePainter(
-//                                model = R.drawable.switchinsearch,
-//                                imageLoader = svgImageLoader
-//                            ),
-//                            contentDescription = null,
-//                            colorFilter = if (switchIndicator.value) ColorFilter.tint(LightGreen) else null,
-//                            modifier = modifier
-//                                .size(40.dp)
-//                                .clickable {
-//                                    switchIndicator.value = !switchIndicator.value
-//                                }
-//                        )
-//                    }
-//                    , leadingIcon = {Icon(Icons.Filled.Search, "Search Icon", tint = iconColorInSearchPanel)},
-//                    modifier = modifier
-//                        .clip(RoundedCornerShape(30.dp))
-//                        .height(50.dp)
-//                        .fillMaxWidth(1f)
-//                ) {
-//
-//                }
-
                     OutlinedTextField(
                         placeholder = { Text(text = "Search...", color = iconColorInSearchPanel) },
                         value = searchText ?: "",
@@ -181,7 +150,7 @@ fun MainScreen(
 
                             Image(
                                 painter = rememberAsyncImagePainter(
-                                    model = if (switchIndicator.value) R.drawable.search_back else R.drawable.search_home,
+                                    model = if (viewModel.switchIndicator.value) R.drawable.search_back else R.drawable.search_home,
                                     imageLoader = svgImageLoader
                                 ),
                                 contentDescription = null,
@@ -189,7 +158,9 @@ fun MainScreen(
                                 modifier = modifier
                                     .fillMaxHeight(0.55f)
                                     .clickable {
-                                        switchIndicator.value = !switchIndicator.value
+
+                                        viewModel.switchIndicator.value =
+                                            !viewModel.switchIndicator.value
                                     }
                             )
                         },
@@ -206,22 +177,23 @@ fun MainScreen(
                 }
             }
 
-            TabSelectionMenu(viewModel, modifier) { switchIndicator }
+            TabSelectionMenu(viewModel, modifier) { viewModel.switchIndicator }
 
             GridAdder(
                 onNavigateToDetailScreen = onNavigateToDetailScreen,
                 modifier = modifier,
-                switch = { switchIndicator.value },
+                switch = { viewModel.switchIndicator },
                 isInDarkTheme = isInDarkTheme,
                 svgImageLoader = svgImageLoader,
-                onListState = onListState
+                onListState = onListState,
+                isBottomBarVisible = isBottomBarVisable
             )
 
 
         }
     }, onLoad = {
         viewModel.viewModelScope.launch(Dispatchers.IO) {
-            if (switchIndicator.value.not()) {
+            if (viewModel.switchIndicator.value.not()) {
                 viewModel.reloadAllSectionAndCache(context)
                 return@launch
             }

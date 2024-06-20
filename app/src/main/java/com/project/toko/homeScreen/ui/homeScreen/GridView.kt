@@ -1,5 +1,7 @@
 package com.project.toko.homeScreen.ui.homeScreen
 
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import com.project.toko.homeScreen.ui.viewModel.HomeScreenViewModel
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -7,6 +9,8 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,16 +18,25 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,6 +66,8 @@ import com.project.toko.core.ui.theme.SectionColor
 import com.project.toko.core.ui.theme.evolventaBoldFamily
 import com.project.toko.core.ui.theme.scoreBoardColor
 import com.project.toko.daoScreen.data.dao.AnimeItem
+import com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData
+import com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -63,10 +79,11 @@ import java.util.Locale
 fun GridAdder(
     onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier,
-    switch: () -> Boolean,
+    switch: () -> MutableState<Boolean>,
     isInDarkTheme: () -> Boolean,
     svgImageLoader: ImageLoader,
-    onListState: () -> LazyListState
+    onListState: () -> LazyListState,
+    isBottomBarVisible: () -> Boolean
 ) {
     val viewModel: HomeScreenViewModel = hiltViewModel()
 
@@ -75,14 +92,15 @@ fun GridAdder(
     val getTopUpcoming by viewModel.topUpcomingAnime.collectAsStateWithLifecycle()
     val getTopAiring by viewModel.topAiringAnime.collectAsStateWithLifecycle()
 
-    if (switch()) {
-        if (viewModel.isLoadingSearch.value.not()) {
-            SearchScreen(
-                viewModel, newAnimeSearchModel, onNavigateToDetailScreen, svgImageLoader,   onListState
-            )
-        } else {
-            LoadingAnimation()
-        }
+    if (switch().value) {
+        SearchScreen(
+            viewModel,
+            newAnimeSearchModel,
+            onNavigateToDetailScreen,
+            svgImageLoader,
+            onListState,
+            isBottomBarVisible
+        )
     } else {
         ShowMainScreen(
             isInDarkTheme = isInDarkTheme,
@@ -91,7 +109,6 @@ fun GridAdder(
             getTopAiring = getTopAiring,
             getTopUpcoming = getTopUpcoming,
             getTrendingAnime = getTrendingAnime,
-//            onListState = onListState
         )
     }
 
@@ -128,47 +145,73 @@ fun GridAdder(
 @Composable
 fun SearchScreen(
     viewModel: HomeScreenViewModel,
-    newAnimeSearchModel: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
+    newAnimeSearchModel: NewAnimeSearchModel,
     onNavigateToDetailScreen: (Int) -> Unit,
     svgImageLoader: ImageLoader,
-    onListState: () -> LazyListState
+    onListState: () -> LazyListState,
+    isBottomBarVisible: () -> Boolean
 ) {
-    var additionalDataRequested by remember { mutableStateOf(false) }
-//    val columnState = rememberLazyListState()
+    if (viewModel.isLoadingSearch.value.not()) {
+        val coroutine = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = !onListState().canScrollForward && newAnimeSearchModel.pagination.has_next_page) {
-        withContext(Dispatchers.IO) {
-            additionalDataRequested = true
-            delay(300) // Измените задержку по вашему усмотрению
-            viewModel.loadNextPage()
-            additionalDataRequested = false
+        val featchNextPage: Boolean by remember {
+            derivedStateOf {
+                !onListState().canScrollForward && newAnimeSearchModel.pagination.has_next_page
+            }
         }
-    }
+        LaunchedEffect(key1 = featchNextPage) {
+            if (featchNextPage) viewModel.loadNextPage()
+        }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        state = onListState()
-    ) {
-        items(newAnimeSearchModel.data.chunked(2)) { rowData ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+        Scaffold(floatingActionButton = {
+            AnimatedVisibility(
+                visible = !isBottomBarVisible(),
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
-                rowData.forEach { data ->
-                    val cardModifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 10.dp) // Add your desired padding here
-                    AnimeCardBox(
-                        data = data,
-                        onNavigateToDetailScreen = onNavigateToDetailScreen,
-                        modifier = cardModifier,
-                        svgImageLoader = svgImageLoader,
-                        homeScreenViewModel = viewModel
-                    )
+                FloatingActionButton(
+                    onClick = {
+                        coroutine.launch {
+                            onListState().scrollToItem(0)
+                        }
+                    },
+                ) {
+                    Icon(Icons.Filled.KeyboardArrowUp, "Floating action button.")
+                }
+            }
+        }) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primary),
+                state = onListState()
+            ) {
+                items(
+                    newAnimeSearchModel.data.chunked(2),
+                    key = { rowData -> rowData[0].id }) { rowData ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        rowData.forEach { data ->
+                            val cardModifier = Modifier
+                                .weight(1f)
+                                .padding(vertical = 10.dp) // Add your desired padding here
+                            AnimeCardBox(
+                                data = data,
+                                onNavigateToDetailScreen = onNavigateToDetailScreen,
+                                modifier = cardModifier,
+                                svgImageLoader = svgImageLoader,
+                                homeScreenViewModel = viewModel
+                            )
+                        }
+                    }
                 }
             }
         }
+    } else {
+        LoadingAnimation()
     }
 
 }
@@ -180,10 +223,9 @@ fun ShowMainScreen(
     isInDarkTheme: () -> Boolean,
     onNavigateToDetailScreen: (Int) -> Unit,
     svgImageLoader: ImageLoader,
-    getTrendingAnime: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
-    getTopUpcoming: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
-    getTopAiring: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
-//    onListState: () -> LazyListState
+    getTrendingAnime: NewAnimeSearchModel,
+    getTopUpcoming: NewAnimeSearchModel,
+    getTopAiring: NewAnimeSearchModel,
 ) {
 
     val scroll = rememberScrollState()
@@ -402,229 +444,11 @@ fun ShowMainScreen(
 }
 
 
-
-//@Composable
-//fun ShowMainScreen(
-//    modifier: Modifier = Modifier,
-//    isInDarkTheme: () -> Boolean,
-//    onNavigateToDetailScreen: (Int) -> Unit,
-//    svgImageLoader: ImageLoader,
-//    getTrendingAnime: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
-//    getTopUpcoming: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
-//    getTopAiring: com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel,
-//    onListState: () -> LazyListState
-//) {
-//    val viewModel: HomeScreenViewModel = hiltViewModel()
-//    val loadingSectionTopAiring by viewModel.loadingSectionTopAiring
-//    val loadingSectionTopUpcoming by viewModel.loadingSectionTopUpcoming
-//    val loadingSectionTopTrending by viewModel.loadingSectionTopTrending
-//    val lastTenAnimeFromWatchingSection by
-//    viewModel.showListOfWatching().collectAsStateWithLifecycle(
-//        initialValue = emptyList()
-//    )
-//    val getJustTenAddedAnime by
-//    viewModel.showLastAdded().collectAsStateWithLifecycle(
-//        initialValue = emptyList()
-//    )
-//
-//    LazyColumn(
-//        state = onListState(),
-//        modifier = modifier
-//            .fillMaxSize()
-//            .background(MaterialTheme.colorScheme.primary)
-//    ) {
-//        if (lastTenAnimeFromWatchingSection.isNotEmpty()) {
-//            item {
-//                ShowSectionName(
-//                    sectionName = "Now Watching ",
-//                    modifier = modifier,
-//                    isInDarkTheme = isInDarkTheme
-//                )
-//            }
-//            item {
-//                LazyRow(
-//                    modifier = modifier
-//                        .background(MaterialTheme.colorScheme.primary)
-//                ) {
-//                    items(lastTenAnimeFromWatchingSection) { data ->
-//                        Spacer(modifier = modifier.width(20.dp))
-//                        ShowSection(
-//                            data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
-//                            modifier = modifier,
-//                            svgImageLoader = svgImageLoader
-//                        )
-//                    }
-//                    item {
-//                        Spacer(modifier = modifier.width(20.dp))
-//                    }
-//                }
-//                Spacer(modifier = modifier.height(20.dp))
-//            }
-//        }
-//        item {
-//            if (loadingSectionTopTrending.not()) {
-//                ShowSectionName(
-//                    sectionName = "Trending",
-//                    modifier = modifier,
-//                    isInDarkTheme = isInDarkTheme
-//                )
-//
-//                LazyRow(
-//                    modifier = modifier
-//                        .background(MaterialTheme.colorScheme.primary)
-//                ) {
-//                    items(getTrendingAnime.data) { data ->
-//                        Spacer(modifier = modifier.width(20.dp))
-//                        ShowTopAnime(
-//                            data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
-//                            modifier = modifier,
-//                            svgImageLoader = svgImageLoader
-//                        )
-//                    }
-//                    item {
-//                        Spacer(modifier = modifier.width(20.dp))
-//                    }
-//                }
-//                Spacer(modifier = modifier.height(20.dp))
-//            } else {
-//                ShowSectionName(
-//                    sectionName = "Trending",
-//                    modifier = modifier,
-//                    isInDarkTheme = isInDarkTheme
-//                )
-//                Row(
-//                    modifier = modifier
-//                        .height(300.dp)
-//                        .background(MaterialTheme.colorScheme.primary),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.Center
-//                ) {
-//                    LoadingAnimation()
-//                }
-//            }
-//        }
-//        if (getJustTenAddedAnime.isNotEmpty()) {
-//            item {
-//                ShowSectionName(
-//                    sectionName = "Just Added",
-//                    modifier = modifier,
-//                    isInDarkTheme = isInDarkTheme
-//                )
-//            }
-//            item {
-//                LazyRow(
-//                    modifier = modifier
-//                        .background(MaterialTheme.colorScheme.primary)
-//                ) {
-//                    items(getJustTenAddedAnime) { data ->
-//                        Spacer(modifier = modifier.width(20.dp))
-//                        ShowSection(
-//                            data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
-//                            modifier = modifier,
-//                            svgImageLoader = svgImageLoader
-//                        )
-//                    }
-//                    item {
-//                        Spacer(modifier = modifier.width(20.dp))
-//                    }
-//                }
-//                Spacer(modifier = modifier.height(20.dp))
-//            }
-//        }
-//        item {
-//            if (loadingSectionTopAiring.not()) {
-//                ShowSectionName(
-//                    sectionName = "Top Airing",
-//                    modifier = modifier,
-//                    isInDarkTheme = isInDarkTheme
-//                )
-//
-//                LazyRow(
-//                    modifier = modifier
-//                        .background(MaterialTheme.colorScheme.primary)
-//                ) {
-//                    items(getTopAiring.data) { data ->
-//                        Spacer(modifier = modifier.width(20.dp))
-//                        ShowTopAnime(
-//                            data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
-//                            modifier = modifier,
-//                            svgImageLoader = svgImageLoader
-//                        )
-//                    }
-//                    item {
-//                        Spacer(modifier = modifier.width(20.dp))
-//                    }
-//                }
-//                Spacer(modifier = modifier.height(20.dp))
-//            } else {
-//                ShowSectionName(
-//                    sectionName = "Top Airing",
-//                    modifier = modifier,
-//                    isInDarkTheme = isInDarkTheme
-//                )
-//                Row(
-//                    modifier = modifier
-//                        .height(300.dp)
-//                        .background(MaterialTheme.colorScheme.primary),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.Center
-//                ) {
-//                    LoadingAnimation()
-//                }
-//            }
-//        }
-//        item {
-//            if (loadingSectionTopUpcoming.not()) {
-//                ShowSectionName(
-//                    sectionName = "Top Upcoming",
-//                    modifier = modifier,
-//                    isInDarkTheme = isInDarkTheme
-//                )
-//
-//                LazyRow(
-//                    modifier = modifier
-//                        .background(MaterialTheme.colorScheme.primary)
-//                ) {
-//                    items(getTopUpcoming.data) { data ->
-//                        Spacer(modifier = modifier.width(20.dp))
-//                        ShowTopAnime(
-//                            data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
-//                            modifier = modifier,
-//                            svgImageLoader = svgImageLoader
-//                        )
-//                    }
-//                    item {
-//                        Spacer(modifier = modifier.width(20.dp))
-//                    }
-//                }
-//                Spacer(modifier = modifier.height(20.dp))
-//            } else {
-//                ShowSectionName(
-//                    sectionName = "Top Upcoming",
-//                    modifier = modifier,
-//                    isInDarkTheme = isInDarkTheme
-//                )
-//                Row(
-//                    modifier = modifier
-//                        .height(300.dp)
-//                        .background(MaterialTheme.colorScheme.primary),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.Center
-//                ) {
-//                    LoadingAnimation()
-//                }
-//
-//            }
-//        }
-//    }
-
-
-
 @Stable
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AnimeCardBox(
-    data: com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData,
+    data: AnimeSearchData,
     onNavigateToDetailScreen: (Int) -> Unit,
     modifier: Modifier,
     svgImageLoader: ImageLoader,
@@ -1192,3 +1016,4 @@ private fun ShowTopAnime(
         }
     }
 }
+
