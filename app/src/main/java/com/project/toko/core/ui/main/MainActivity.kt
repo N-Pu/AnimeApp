@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.ImageLoader
@@ -20,6 +21,7 @@ import com.project.toko.core.ui.appConstraction.AppActivator
 import com.project.toko.core.ui.theme.SplashTheme
 import com.project.toko.core.ui.theme.Theme
 import com.project.toko.core.data.settings.SaveDarkMode
+import com.project.toko.homeScreen.ui.viewModel.HomeScreenViewModel
 import com.project.toko.splashScreen.AnimatedSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -48,6 +50,8 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
+//            val loadNSFW : HomeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
+//            loadNSFW.loadNSFWData()
             val systemUiController = rememberSystemUiController(window)
             val splashShown = remember { mutableStateOf(false) }
             navController = rememberNavController()

@@ -16,13 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,12 +44,12 @@ import com.project.toko.core.ui.theme.BackArrowSecondCastColor
 import com.project.toko.core.ui.theme.DarkBackArrowCastColor
 import com.project.toko.core.ui.theme.DarkBackArrowSecondCastColor
 import com.project.toko.core.ui.theme.evolventaBoldFamily
-import com.project.toko.detailScreen.ui.viewModel.DetailScreenViewModel
 import com.project.toko.detailScreen.data.model.castModel.CastData
 import com.project.toko.detailScreen.data.model.castModel.ImagesX
 import com.project.toko.detailScreen.data.model.castModel.JpgX
 import com.project.toko.detailScreen.data.model.castModel.Person
 import com.project.toko.detailScreen.data.model.castModel.VoiceActor
+import com.project.toko.detailScreen.ui.viewModel.DetailScreenViewModel
 
 @Composable
 fun ShowWholeCast(
@@ -83,13 +81,13 @@ fun ShowWholeCast(
         }
     }
 
-    BackArrow(modifier, onNavigateBack, viewModel.loadedId.intValue, isInDarkTheme = isInDarkTheme)
+    BackArrow(modifier, onNavigateBack, isInDarkTheme = isInDarkTheme)
 }
 
 
 @Composable
 private fun AddCast(
-    castList: com.project.toko.detailScreen.data.model.castModel.CastData,
+    castList: CastData,
     onNavigateToDetailOnCharacter: (Int) -> Unit, onNavigateToDetailOnStaff: (Int) -> Unit,
     modifier: Modifier,
 ) {
@@ -127,8 +125,8 @@ private fun CurrentCast(
     modifier: Modifier,
     personPainter: AsyncImagePainter,
     characterPainter: AsyncImagePainter,
-    voiceActor: com.project.toko.detailScreen.data.model.castModel.VoiceActor,
-    data: com.project.toko.detailScreen.data.model.castModel.CastData,
+    voiceActor: VoiceActor,
+    data: CastData,
     onNavigateToDetailOnStaff: (Int) -> Unit,
     onNavigateToDetailOnCharacter: (Int) -> Unit
 ) {
@@ -297,7 +295,6 @@ private fun CurrentCast(
 private fun BackArrow(
     modifier: Modifier,
     onNavigateBack: () -> Unit,
-    detailScreenMalId: Int,
     isInDarkTheme: () -> Boolean
 ) {
     val backArrowFirstColor = if (isInDarkTheme()) DarkBackArrowCastColor else BackArrowCastColor
@@ -317,12 +314,6 @@ private fun BackArrow(
                 textAlign = TextAlign.Start,
                 textDecoration = TextDecoration.Underline,
                 modifier = modifier.clickable {
-//                    navController.navigate("detail_screen/$detailScreenMalId") {
-//                        launchSingleTop = true
-//                        popUpTo(route = Screen.DetailOnWholeCast.route) {
-//                            inclusive = true
-//                        }
-//                    }
                     onNavigateBack()
                 },
                 color = MaterialTheme.colorScheme.onPrimary,
@@ -340,23 +331,23 @@ private fun BackArrow(
     }
 }
 
-private fun hasJapVoiceActor(castList: List<com.project.toko.detailScreen.data.model.castModel.CastData>): List<com.project.toko.detailScreen.data.model.castModel.CastData> {
+private fun hasJapVoiceActor(castList: List<CastData>): List<CastData> {
     return castList.map { data ->
         val japOrFirstVoiceActor = getJapOrFirstVoiceActor(data)
-        com.project.toko.detailScreen.data.model.castModel.CastData(
+        CastData(
             data.character, data.role, listOf(japOrFirstVoiceActor)
         )
     }
 }
 
-private fun getJapOrFirstVoiceActor(data: com.project.toko.detailScreen.data.model.castModel.CastData): com.project.toko.detailScreen.data.model.castModel.VoiceActor {
+private fun getJapOrFirstVoiceActor(data: CastData): VoiceActor {
     return if (data.voice_actors.isNotEmpty()) {
         data.voice_actors.firstOrNull { it.language == "Japanese" } ?: data.voice_actors[0]
     } else {
-        com.project.toko.detailScreen.data.model.castModel.VoiceActor(
-            "", com.project.toko.detailScreen.data.model.castModel.Person(
-                com.project.toko.detailScreen.data.model.castModel.ImagesX(
-                    com.project.toko.detailScreen.data.model.castModel.JpgX(
+        VoiceActor(
+            "", Person(
+                ImagesX(
+                    JpgX(
                         ""
                     )
                 ), 0, "", ""
