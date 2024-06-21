@@ -81,6 +81,7 @@ import com.project.toko.core.ui.navigation.RootScreen
 import com.project.toko.core.ui.navigation.navigateToTab
 import com.project.toko.daoScreen.ui.daoViewModel.DaoViewModel
 import com.project.toko.daoScreen.data.model.AnimeStatus
+import com.project.toko.homeScreen.domain.useCase.NsfwDataProvider
 import com.project.toko.homeScreen.ui.viewModel.HomeScreenViewModel
 import com.project.toko.randomAnimeScreen.presentation_layer.viewModel.RandomAnimeViewModel
 import kotlinx.coroutines.launch
@@ -355,7 +356,9 @@ private fun ShowDrawerContent(
                 badge = {
                     Switch(checked = homeScreenViewModel.isNSFWActive.value,
                         onCheckedChange = {
-                            homeScreenViewModel.saveNSFWData(it)
+                            val nsfwDataProvider = NsfwDataProvider(context)
+                            nsfwDataProvider.saveNSFWData(it)
+//                            homeScreenViewModel.saveNSFWData(it)
                             homeScreenViewModel.isNSFWActive.value = it
                             randomScreenViewModel.isNSFWActive.value = it
                         },

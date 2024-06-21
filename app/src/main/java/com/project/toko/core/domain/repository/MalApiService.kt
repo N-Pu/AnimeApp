@@ -40,7 +40,7 @@ interface MalApiService {
         @Query("rating") rating: String? = null,
         @Query("order_by") orderBy: String? = null,
         @Query("sort") sort: String? = null,
-    ): Response<com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel>
+    ): Response<NewAnimeSearchModel>
 
     // Enum: "airing" "upcoming" "bypopularity" "favorite"
     @GET("${BASE_URL}v4/top/anime?")
@@ -48,7 +48,7 @@ interface MalApiService {
         @Query("filter") filter: String,
         @Query("limit") limit: Int,
         @Query("sfw") sfw: Boolean
-    ): Response<com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel>
+    ): Response<NewAnimeSearchModel>
 
 
     @GET("${BASE_URL}v4/anime/{id}/full")

@@ -14,6 +14,15 @@ import com.project.toko.core.domain.util.connectionCheck.isInternetAvailable
 import com.project.toko.core.data.dao.MainDb
 import com.project.toko.core.domain.repository.MalApiService
 import com.project.toko.daoScreen.data.dao.AnimeItem
+import com.project.toko.homeScreen.data.model.linkChangerModel.OrderBy
+import com.project.toko.homeScreen.data.model.linkChangerModel.Rating
+import com.project.toko.homeScreen.data.model.linkChangerModel.Score
+import com.project.toko.homeScreen.data.model.linkChangerModel.Types
+import com.project.toko.homeScreen.data.model.linkChangerModel.getGenres
+import com.project.toko.homeScreen.data.model.linkChangerModel.getOrderBy
+import com.project.toko.homeScreen.data.model.linkChangerModel.getRating
+import com.project.toko.homeScreen.data.model.linkChangerModel.getTypes
+import com.project.toko.homeScreen.domain.useCase.NsfwDataProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -70,7 +79,8 @@ class HomeScreenViewModel @Inject constructor(
 
     private val arrayOfGenres = MutableStateFlow(arrayListOf<Int>())
 
-    private val preSelectedGenre = MutableStateFlow(com.project.toko.homeScreen.data.model.linkChangerModel.getGenres())
+    private val preSelectedGenre =
+        MutableStateFlow(getGenres())
     val selectedGenre = preSelectedGenre
 
 
@@ -78,66 +88,84 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _genres = MutableStateFlow<String?>(null)
 
-    private val _ratingList = MutableStateFlow(com.project.toko.homeScreen.data.model.linkChangerModel.getRating())
+    private val _ratingList =
+        MutableStateFlow(getRating())
     val ratingList = _ratingList
 
 
-    private val preSelectedRating = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Rating?>(null)
+    private val preSelectedRating =
+        MutableStateFlow<Rating?>(null)
     val selectedRating = preSelectedRating
 
-    private val _selectedRating = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Rating?>(null)
+    private val _selectedRating =
+        MutableStateFlow<Rating?>(null)
 
-    fun setSelectedRating(rating: com.project.toko.homeScreen.data.model.linkChangerModel.Rating) {
+    fun setSelectedRating(rating: Rating) {
         preSelectedRating.value = if (rating == preSelectedRating.value) null else rating
     }
 
 
-    private val _pre_min_score = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Score?>(null)
+    private val _pre_min_score =
+        MutableStateFlow<Score?>(null)
     val pre_min_score = _pre_min_score
-    private val _min_score = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Score?>(null)
+    private val _min_score =
+        MutableStateFlow<Score?>(null)
 
 
-    private val _pre_max_score = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Score?>(null)
+    private val _pre_max_score =
+        MutableStateFlow<Score?>(null)
     val pre_max_score = _pre_max_score
-    private val _max_score = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Score?>(null)
+    private val _max_score =
+        MutableStateFlow<Score?>(null)
 
     private val _scoreState = mutableIntStateOf(0)
     val scoreState = _scoreState
 
-    private val _isNSFWActive = mutableStateOf(false)
-    val isNSFWActive = _isNSFWActive
+//    private val _isNSFWActive = mutableStateOf(false)
+//    val isNSFWActive = _isNSFWActive
+//
+//    fun saveNSFWData(isActive: Boolean) {
+//        val sharedPreferences = context.getSharedPreferences("NSFW Mode", Context.MODE_PRIVATE)
+//        val editor = sharedPreferences.edit()
+//        editor.putBoolean("NSFW_MODE", isActive)
+//        editor.apply()
+//        _isNSFWActive.value = isActive
+//    }
+//
+//    fun loadNSFWData() {
+//        val sharedPreferences = context.getSharedPreferences("NSFW Mode", Context.MODE_PRIVATE)
+//        _isNSFWActive.value = sharedPreferences.getBoolean("NSFW_MODE", false)
+//    }
 
-    fun saveNSFWData(isActive: Boolean) {
-        val sharedPreferences = context.getSharedPreferences("NSFW Mode", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("NSFW_MODE", isActive)
-        editor.apply()
-        _isNSFWActive.value = isActive
-    }
+    private val nswfProvider = NsfwDataProvider(context)
+    val isNSFWActive = nswfProvider.isNSFWActive
 
-    fun loadNSFWData() {
-        val sharedPreferences = context.getSharedPreferences("NSFW Mode", Context.MODE_PRIVATE)
-        _isNSFWActive.value = sharedPreferences.getBoolean("NSFW_MODE", false)
-    }
-
-    private val _typeList = MutableStateFlow(com.project.toko.homeScreen.data.model.linkChangerModel.getTypes())
+    private val _typeList =
+        MutableStateFlow(getTypes())
     val typeList = _typeList
 
-    private val pre_selectedType = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Types?>(null)
-    val selectedType: StateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Types?> = pre_selectedType
-    private val _selectedType = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.Types?>(null)
+    private val pre_selectedType =
+        MutableStateFlow<Types?>(null)
+    val selectedType: StateFlow<Types?> =
+        pre_selectedType
+    private val _selectedType =
+        MutableStateFlow<Types?>(null)
 
-    fun setSelectedType(type: com.project.toko.homeScreen.data.model.linkChangerModel.Types) {
+    fun setSelectedType(type: Types) {
         pre_selectedType.value = if (type == pre_selectedType.value) null else type
     }
 
-    private val _orderByList = MutableStateFlow(com.project.toko.homeScreen.data.model.linkChangerModel.getOrderBy())
+    private val _orderByList =
+        MutableStateFlow(getOrderBy())
     val orderByList = _orderByList
-    private val pre_selectedOrderBy = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.OrderBy?>(null)
-    val selectedOrderBy: StateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.OrderBy?> = pre_selectedOrderBy
-    private val _selectedOrderBy = MutableStateFlow<com.project.toko.homeScreen.data.model.linkChangerModel.OrderBy?>(null)
+    private val pre_selectedOrderBy =
+        MutableStateFlow<OrderBy?>(null)
+    val selectedOrderBy: StateFlow<OrderBy?> =
+        pre_selectedOrderBy
+    private val _selectedOrderBy =
+        MutableStateFlow<OrderBy?>(null)
 
-    fun setSelectedOrderBy(orderBy: com.project.toko.homeScreen.data.model.linkChangerModel.OrderBy) {
+    fun setSelectedOrderBy(orderBy: OrderBy) {
         pre_selectedOrderBy.value = if (orderBy == pre_selectedOrderBy.value) null else orderBy
     }
 
@@ -174,7 +202,8 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    private val cachedSearch: MutableMap<String, com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel> = mutableMapOf()
+    private val cachedSearch: MutableMap<String, com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel> =
+        mutableMapOf()
 
     private fun generateRequestKey(
         query: String?,
@@ -228,7 +257,7 @@ class HomeScreenViewModel @Inject constructor(
             } else {
                 val response = malApiRepository.getAnimeSearchByName(
                     eTag = query + currentPage.value,
-                    sfw = !_isNSFWActive.value,
+                    sfw = !isNSFWActive.value,
                     query = currentQuery,
                     page = currentPage.value,
                     genres = currentGenres,
@@ -266,7 +295,8 @@ class HomeScreenViewModel @Inject constructor(
     val topUpcomingAnime = _topUpcomingAnime.asStateFlow()
 
 
-    private val cachedTopTrendingAnime: MutableMap<String, com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel> = mutableMapOf()
+    private val cachedTopTrendingAnime: MutableMap<String, com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel> =
+        mutableMapOf()
 
     private val _loadingSectionTopAiring = mutableStateOf(false)
     val loadingSectionTopAiring = _loadingSectionTopAiring
@@ -341,7 +371,7 @@ class HomeScreenViewModel @Inject constructor(
 
                 val response = malApiRepository.getAnimeSearchByName(
                     eTag = query + currentPage.value,
-                    sfw = !_isNSFWActive.value,
+                    sfw = !isNSFWActive.value,
                     query = currentQuery,
                     page = nextPage,
                     genres = makeArrayToLinkWithCommas(arrayOfGenres.value),
@@ -539,7 +569,7 @@ class HomeScreenViewModel @Inject constructor(
                     25,
                     _topTrendingAnime,
                     loadingSectionTopTrending,
-                    !_isNSFWActive.value
+                    !isNSFWActive.value
                 )
                 delay(500L)
                 getTopAnime(
@@ -547,7 +577,7 @@ class HomeScreenViewModel @Inject constructor(
                     25,
                     _topAiringAnime,
                     loadingSectionTopAiring,
-                    !_isNSFWActive.value
+                    !isNSFWActive.value
                 )
                 delay(500L)
                 getTopAnime(
@@ -555,7 +585,7 @@ class HomeScreenViewModel @Inject constructor(
                     25,
                     _topUpcomingAnime,
                     loadingSectionTopUpcoming,
-                    !_isNSFWActive.value
+                    !isNSFWActive.value
                 )
             } else {
                 withContext(Dispatchers.Main) {
@@ -577,7 +607,7 @@ class HomeScreenViewModel @Inject constructor(
                     25,
                     _topTrendingAnime,
                     loadingSectionTopTrending,
-                    !_isNSFWActive.value
+                    !isNSFWActive.value
                 )
                 delay(500L)
                 getTopAnime(
@@ -585,7 +615,7 @@ class HomeScreenViewModel @Inject constructor(
                     25,
                     _topAiringAnime,
                     loadingSectionTopAiring,
-                    !_isNSFWActive.value
+                    !isNSFWActive.value
                 )
                 delay(500L)
                 getTopAnime(
@@ -593,7 +623,7 @@ class HomeScreenViewModel @Inject constructor(
                     25,
                     _topUpcomingAnime,
                     loadingSectionTopUpcoming,
-                    !_isNSFWActive.value
+                    !isNSFWActive.value
                 )
             } else {
                 withContext(Dispatchers.Main) {

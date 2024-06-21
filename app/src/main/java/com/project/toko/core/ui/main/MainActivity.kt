@@ -20,6 +20,7 @@ import com.project.toko.core.ui.appConstraction.AppActivator
 import com.project.toko.core.ui.theme.SplashTheme
 import com.project.toko.core.ui.theme.Theme
 import com.project.toko.core.data.settings.SaveDarkMode
+import com.project.toko.homeScreen.domain.useCase.NsfwDataProvider
 import com.project.toko.splashScreen.AnimatedSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         darkTheme = SaveDarkMode(this)
         darkTheme.loadData()
-
+        NsfwDataProvider(this).loadNSFWData()
 
         setContent {
 //            val loadNSFW : HomeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
