@@ -2,15 +2,8 @@ package com.project.toko.core.domain.repository
 
 
 import android.util.Log
-import com.project.toko.detailScreen.data.model.detailModel.DetailScreenModel
 import com.project.toko.randomAnimeScreen.data.model.AnimeRandomModel
-import com.project.toko.detailScreen.data.model.castModel.CastModel
-import com.project.toko.detailScreen.data.model.pictureModel.DetailPicturesDataModel
-import com.project.toko.detailScreen.data.model.recommendationsModel.RecommendationsModel
 import com.project.toko.homeScreen.data.model.newAnimeSearchModel.NewAnimeSearchModel
-import com.project.toko.detailScreen.data.model.staffModel.StaffModel
-import com.project.toko.personDetailedScreen.data.model.personFullModel.PersonFullModel
-import com.project.toko.personDetailedScreen.data.model.personPictures.PersonPicturesModel
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import retrofit2.Response
