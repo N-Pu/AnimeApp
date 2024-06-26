@@ -55,7 +55,7 @@ interface MalApiService {
     suspend fun getRecommendationsFromAnime(@Path("id") id: Int): Response<com.project.toko.detailScreen.data.model.recommendationsModel.RecommendationsModel>
 
     @GET("${BASE_URL}v4/random/anime")
-    suspend fun getRandomAnime(@Query("sfw") sfw: Boolean): Response<AnimeRandomModel>
+    suspend fun getRandomAnime(@Query("sfw") sfw: Boolean): AnimeRandomModel
 
     @GET("${BASE_URL}v4/anime/{id}/characters")
     suspend fun getCharactersFromId(@Path("id") id: Int): Response<com.project.toko.detailScreen.data.model.castModel.CastModel> {

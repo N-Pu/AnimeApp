@@ -117,7 +117,7 @@ class DaoViewModel @Inject constructor(
         }
     }
 
-    suspend fun addToCategory(animeItem: AnimeItem) {
+     fun addToCategory(animeItem: AnimeItem) {
         try {
             viewModelScope.launch(Dispatchers.IO) {
                 mainDb.getDao().addToCategory(animeItem)

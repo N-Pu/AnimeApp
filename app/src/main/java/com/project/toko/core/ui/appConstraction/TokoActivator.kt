@@ -298,7 +298,6 @@ private fun ShowDrawerContent(
 ) {
     val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
     val daoViewModel: DaoViewModel = hiltViewModel()
-    val randomScreenViewModel: RandomAnimeViewModel = hiltViewModel()
 
     var isHelpFAQOpen by remember { mutableStateOf(false) }
     var isLegalOpen by remember { mutableStateOf(false) }
@@ -360,7 +359,7 @@ private fun ShowDrawerContent(
                             nsfwDataProvider.saveNSFWData(it)
 //                            homeScreenViewModel.saveNSFWData(it)
                             homeScreenViewModel.isNSFWActive.value = it
-                            randomScreenViewModel.isNSFWActive.value = it
+//                            randomScreenViewModel.isNSFWActive.value = it
                         },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = MaterialTheme.colorScheme.inversePrimary,

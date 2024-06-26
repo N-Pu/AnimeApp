@@ -1,5 +1,9 @@
 package com.project.toko.core.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
@@ -10,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import coil.ImageLoader
@@ -56,10 +61,29 @@ private fun NavGraphBuilder.homeSubGraph(
     svgImageLoader: ImageLoader,
     isInDarkTheme: () -> Boolean,
     onListState: () -> LazyListState,
-    isBottomBarVisible: () ->Boolean
+    isBottomBarVisible: () -> Boolean
 ) {
     // Main Graph
-    navigation(startDestination = LeafScreen.Home.route, route = RootScreen.HomeSubGraph.route) {
+    navigation(
+        startDestination = LeafScreen.Home.route,
+        route = RootScreen.HomeSubGraph.route,
+//        enterTransition = {
+//            slideIntoContainer(
+//                AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(1700)
+//            )
+//        },
+//        exitTransition = {
+//            slideOutOfContainer(
+//                AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(1700)
+//            )
+//        }
+        enterTransition = {
+            fadeIn()
+        },
+        exitTransition = {
+            fadeOut()
+        }
+    ) {
         composable(route = LeafScreen.Home.route) {
             MainScreen(
                 onNavigateToDetailScreen = { detailScreenId ->
@@ -173,7 +197,13 @@ private fun NavGraphBuilder.daoSubGraph(
     // Dao Graph
     navigation(
         startDestination = LeafScreen.Favorites.route,
-        route = RootScreen.DaoSubGraph.route
+        route = RootScreen.DaoSubGraph.route,
+        enterTransition = {
+           fadeIn()
+        },
+        exitTransition = {
+           fadeOut()
+        }
     ) {
         composable(route = LeafScreen.Favorites.route) {
             DaoScreen(
@@ -290,9 +320,28 @@ fun NavGraphBuilder.randomSubGraph(
     // Random Anime Graph
     navigation(
         startDestination = LeafScreen.RandomAnimeOrManga.route,
-        route = RootScreen.RandomSubGraph.route
+        route = RootScreen.RandomSubGraph.route,
+//        enterTransition = {
+//            slideIntoContainer(
+//                AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(1700)
+//            )
+//        },
+//        exitTransition = {
+//            slideOutOfContainer(
+//                AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(1700)
+//            )
+//        },
+        enterTransition = {
+            fadeIn()
+        },
+        exitTransition = {
+            fadeOut()
+        }
     ) {
-        composable(route = LeafScreen.RandomAnimeOrManga.route) {
+        composable(
+            route = LeafScreen.RandomAnimeOrManga.route,
+
+            ) {
             ShowRandomAnime(
                 onNavigateToDetailScreen = { detailScreenId ->
                     navController.navigate("detail_screen_random/$detailScreenId") {

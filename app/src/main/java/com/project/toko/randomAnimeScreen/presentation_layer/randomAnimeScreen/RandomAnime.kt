@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -21,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,17 +35,154 @@ import com.alexstyl.swipeablecard.Direction
 import com.alexstyl.swipeablecard.ExperimentalSwipeableCardApi
 import com.alexstyl.swipeablecard.rememberSwipeableCardState
 import com.alexstyl.swipeablecard.swipableCard
+import com.project.toko.core.domain.util.connectionCheck.CommonFunction
 import com.project.toko.core.domain.util.connectionCheck.isInternetAvailable
+import com.project.toko.core.domain.util.stateCheck.CheckState
 import com.project.toko.daoScreen.data.dao.AnimeItem
 import com.project.toko.randomAnimeScreen.presentation_layer.viewModel.RandomAnimeViewModel
 import com.project.toko.core.ui.theme.DialogColor
 import com.project.toko.core.ui.theme.evolventaBoldFamily
 import com.project.toko.daoScreen.ui.daoViewModel.DaoViewModel
 import com.project.toko.daoScreen.data.model.AnimeStatus
+import com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData
+import com.project.toko.randomAnimeScreen.data.model.AnimeRandomModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
+
+
+//@OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
+//@Composable
+//fun ShowRandomAnime(
+//    onNavigateToDetailScreen: (Int) -> Unit, modifier: Modifier = Modifier
+//) {
+//    val randomViewModel: RandomAnimeViewModel = hiltViewModel()
+//    val daoViewModel: DaoViewModel = hiltViewModel()
+//    val data by randomViewModel.animeDetails.collectAsStateWithLifecycle()
+//    var cardIsShown by randomViewModel.cardIsShown
+//    val context = LocalContext.current
+//    val swipeState = rememberSwipeableCardState()
+//
+//    Column(
+//        modifier
+//            .background(MaterialTheme.colorScheme.primary)
+//            .fillMaxSize(),
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Center
+//    ) {
+//
+//        if (data != null) {
+//            AnimeCard(
+//                data = data,
+//                modifier = modifier
+//                    .width(340.dp)
+//                    .height(510.dp)
+//                    .swipableCard(
+//                        blockedDirections = listOf(Direction.Down),
+//                        state = swipeState, onSwiped = { direction ->
+//                            when (direction) {
+//                                Direction.Left -> {
+//                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
+//                                        randomViewModel.onTapRandomAnime()
+//                                        cardIsShown = false
+//                                    }
+//                                }
+//
+//                                Direction.Right -> {
+//                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
+//                                        daoViewModel.addToCategory(
+//                                            animeItem = AnimeItem(
+//                                                id = data?.id,
+//                                                animeName = data?.title ?: "N/A",
+//                                                animeImage = data?.images?.jpg?.large_image_url
+//                                                    ?: "",
+//                                                score = formatScoredBy(data?.score ?: 0.0f),
+//                                                scored_by = formatScoredBy(
+//                                                    data?.scored_by ?: 0.0f
+//                                                ),
+//                                                category = AnimeStatus.PLANNED.route,
+//                                                status = data?.status ?: "",
+//                                                rating = data?.rating ?: "",
+//                                                secondName = data?.title_japanese ?: "",
+//                                                airedFrom = data?.aired?.from ?: "N/A",
+//                                                type = data?.type ?: "N/A"
+//                                            )
+//                                        )
+//                                    }
+//                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
+//                                        randomViewModel.onTapRandomAnime()
+//                                        cardIsShown = false
+//                                    }
+//                                }
+//
+//                                Direction.Up -> {
+//                                    onNavigateToDetailScreen(data?.id ?: 0)
+//
+//                                }
+//
+//                                else -> {}
+//                            }
+//                        },
+//                        onSwipeCancel = {
+//                            randomViewModel.viewModelScope.launch {
+//                                if (!isInternetAvailable(context)) {
+//                                    Toast
+//                                        .makeText(
+//                                            context,
+//                                            "No internet connection!",
+//                                            Toast.LENGTH_SHORT
+//                                        )
+//                                        .show()
+//                                }
+//                            }
+//                        }
+//                    ),
+//                onNavigateToDetailScreen = onNavigateToDetailScreen,
+//                context = context
+//            )
+//        } else {
+//            Box(modifier = Modifier
+//                .clip(CardDefaults.shape)
+//                .background(MaterialTheme.colorScheme.secondary)
+//                .combinedClickable(onDoubleClick = {
+//                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
+//                        if (isInternetAvailable(context)) {
+//                            randomViewModel.onTapRandomAnime()
+//                        }
+//                    }
+//                    randomViewModel.viewModelScope.launch {
+//                        if (!isInternetAvailable(context)) {
+//                            Toast
+//                                .makeText(
+//                                    context,
+//                                    "No internet connection!",
+//                                    Toast.LENGTH_SHORT
+//                                )
+//                                .show()
+//                        }
+//                    }
+//
+//                }) {}
+//                .padding(20.dp)) {
+//                Text(
+//                    text = "Tap 2 times",
+//                    fontSize = 30.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color.White,
+//                    fontFamily = evolventaBoldFamily
+//                )
+//            }
+//        }
+//        LaunchedEffect(data?.id) {
+//            withContext(Dispatchers.IO) {
+//                swipeState.offset.snapTo(Offset(0.0f, 1000.0f))
+//                swipeState.offset.animateTo(Offset(0.0f, 0.0f))
+//            }
+//        }
+//
+//    }
+//}
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
@@ -53,10 +192,10 @@ fun ShowRandomAnime(
 ) {
     val randomViewModel: RandomAnimeViewModel = hiltViewModel()
     val daoViewModel: DaoViewModel = hiltViewModel()
-    val data by randomViewModel.animeDetails.collectAsStateWithLifecycle()
-    var cardIsShown by randomViewModel.cardIsShown
+    val randomResponseState by randomViewModel.randomResponse.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val swipeState = rememberSwipeableCardState()
+    var checkIfCardIsGone by remember { mutableStateOf(false) }
 
     Column(
         modifier
@@ -65,123 +204,124 @@ fun ShowRandomAnime(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
-        if (data != null) {
-            AnimeCard(
-                data = data,
-                modifier = modifier
-                    .width(340.dp)
-                    .height(510.dp)
-                    .swipableCard(
-                        blockedDirections = listOf(Direction.Down),
-                        state = swipeState, onSwiped = { direction ->
-                            when (direction) {
-                                Direction.Left -> {
-                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
-                                        randomViewModel.onTapRandomAnime()
-                                        cardIsShown = false
-                                    }
-                                }
-
-                                Direction.Right -> {
-                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
-                                        daoViewModel.addToCategory(
-                                            animeItem = AnimeItem(
-                                                id = data?.id,
-                                                animeName = data?.title ?: "N/A",
-                                                animeImage = data?.images?.jpg?.large_image_url
-                                                    ?: "",
-                                                score = formatScoredBy(data?.score ?: 0.0f),
-                                                scored_by = formatScoredBy(
-                                                    data?.scored_by ?: 0.0f
-                                                ),
-                                                category = AnimeStatus.PLANNED.route,
-                                                status = data?.status ?: "",
-                                                rating = data?.rating ?: "",
-                                                secondName = data?.title_japanese ?: "",
-                                                airedFrom = data?.aired?.from ?: "N/A",
-                                                type = data?.type ?: "N/A"
-                                            )
-                                        )
-                                    }
-                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
-                                        randomViewModel.onTapRandomAnime()
-                                        cardIsShown = false
-                                    }
-                                }
-
-                                Direction.Up -> {
-                                    onNavigateToDetailScreen(data?.id ?: 0)
-
-                                }
-
-                                else -> {}
-                            }
-                        },
-                        onSwipeCancel = {
-                            randomViewModel.viewModelScope.launch {
-                                if (!isInternetAvailable(context)) {
-                                    Toast
-                                        .makeText(
-                                            context,
-                                            "No internet connection!",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                        .show()
-                                }
-                            }
-                        }
-                    ),
-                onNavigateToDetailScreen = onNavigateToDetailScreen,
-                context = context
-            )
-        } else {
-            Box(modifier = Modifier
-                .clip(CardDefaults.shape)
-                .background(MaterialTheme.colorScheme.secondary)
-                .combinedClickable(onDoubleClick = {
-                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
-                        if (isInternetAvailable(context)) {
-                            randomViewModel.onTapRandomAnime()
-                        }
-                    }
-                    randomViewModel.viewModelScope.launch {
-                        if (!isInternetAvailable(context)) {
-                            Toast
-                                .makeText(
-                                    context,
-                                    "No internet connection!",
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show()
-                        }
-                    }
-
-                }) {}
-                .padding(20.dp)) {
-                Text(
-                    text = "Tap 2 times",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    fontFamily = evolventaBoldFamily
+        when (randomResponseState) {
+            is CheckState.Error -> {
+                val errorMessage = (randomResponseState as CheckState.Error).message
+                ShowError(
+                    randomViewModel = randomViewModel,
+                    errorMessage = errorMessage
                 )
             }
-        }
-        LaunchedEffect(data?.id) {
-            withContext(Dispatchers.IO) {
-                swipeState.offset.snapTo(Offset(0.0f, 1000.0f))
-                swipeState.offset.animateTo(Offset(0.0f, 0.0f))
+
+            is CheckState.Loading -> {
+                // Handle loading state for regular quotes
+                // Render loading indicator or any UI
+                CenteredCircularProgressIndicator()
+            }
+
+            is CheckState.Success -> {
+                // Handle success state for regular quotes
+                val quoteData =
+                    (randomResponseState as CheckState.Success<AnimeRandomModel?>).data?.data
+                // Render UI with quoteData
+                AnimeCard(
+                    data = quoteData,
+                    modifier = modifier
+                        .width(340.dp)
+                        .height(510.dp)
+                        .swipableCard(
+                            blockedDirections = listOf(Direction.Down),
+                            state = swipeState, onSwiped = { direction ->
+                                when (direction) {
+                                    Direction.Left -> {
+                                        randomViewModel.fetchRandomAnime()
+                                    }
+
+                                    Direction.Right -> {
+                                        daoViewModel.addToCategory(
+                                            animeItem = AnimeItem(
+                                                id = quoteData?.id,
+                                                animeName = quoteData?.title ?: "N/A",
+                                                animeImage = quoteData?.images?.jpg?.large_image_url
+                                                    ?: "",
+                                                score = formatScoredBy(quoteData?.score ?: 0.0f),
+                                                scored_by = formatScoredBy(
+                                                    quoteData?.scored_by ?: 0.0f
+                                                ),
+                                                category = AnimeStatus.PLANNED.route,
+                                                status = quoteData?.status ?: "",
+                                                rating = quoteData?.rating ?: "",
+                                                secondName = quoteData?.title_japanese ?: "",
+                                                airedFrom = quoteData?.aired?.from ?: "N/A",
+                                                type = quoteData?.type ?: "N/A"
+                                            )
+                                        )
+
+                                        randomViewModel.fetchRandomAnime()
+                                    }
+
+                                    Direction.Up -> {
+                                        onNavigateToDetailScreen(quoteData?.id ?: 0)
+                                    }
+
+                                    else -> {
+                                        checkIfCardIsGone = true
+                                    }
+                                }
+                            },
+                            onSwipeCancel = {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Swipe canceled!",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                            }
+                        ),
+                    onNavigateToDetailScreen = onNavigateToDetailScreen,
+                    context = context
+                )
+
+                LaunchedEffect(quoteData?.id) {
+                    withContext(Dispatchers.IO) {
+                        swipeState.offset.snapTo(Offset(0.0f, 1000.0f))
+                        swipeState.offset.animateTo(Offset(0.0f, 0.0f))
+                    }
+                }
+                LaunchedEffect(checkIfCardIsGone) {
+                    if (checkIfCardIsGone) {
+                        withContext(Dispatchers.IO) {
+                            swipeState.offset.animateTo(Offset(0.0f, 0.0f))
+                            checkIfCardIsGone = false
+                        }
+                    }
+                }
             }
         }
+    }
+}
 
+@Composable
+fun CenteredCircularProgressIndicator() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .size(50.dp) // Set the size of the CircularProgressIndicator
+                .align(Alignment.Center) // Align it to the center of the Box
+            , color = MaterialTheme.colorScheme.secondary
+        )
     }
 }
 
 
 @Composable
 private fun AnimeCard(
-    data: com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData?,
+    data: AnimeSearchData?,
     modifier: Modifier,
     onNavigateToDetailScreen: (Int) -> Unit,
     context: Context,
@@ -450,7 +590,8 @@ private fun ColoredBox(
 
 @Composable
 private fun DisplayCustomGenres(
-    genres: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Genre>, modifier: Modifier
+    genres: List<com.project.toko.homeScreen.data.model.newAnimeSearchModel.Genre>,
+    modifier: Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
@@ -479,4 +620,22 @@ private fun formatScoredBy(float: Float): String {
     }
 }
 
-
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ShowError(randomViewModel: RandomAnimeViewModel, errorMessage: String) {
+    Box(modifier = Modifier
+        .clip(CardDefaults.shape)
+        .background(MaterialTheme.colorScheme.secondary)
+        .combinedClickable(onDoubleClick = {
+            randomViewModel.fetchRandomAnime()
+        }) {}
+        .padding(20.dp)) {
+        Text(
+            text = errorMessage,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            fontFamily = evolventaBoldFamily
+        )
+    }
+}
