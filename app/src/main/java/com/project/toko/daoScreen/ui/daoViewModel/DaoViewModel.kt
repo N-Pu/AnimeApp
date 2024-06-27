@@ -122,17 +122,21 @@ class DaoViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.IO) {
                 mainDb.getDao().addToCategory(animeItem)
             }
-            Toast.makeText(
-                context,
-                "${animeItem.animeName} is in ${animeItem.category} category!",
-                Toast.LENGTH_LONG
-            ).show()
+            viewModelScope.launch(Dispatchers.Main) {
+                Toast.makeText(
+                    context,
+                    "${animeItem.animeName} is in ${animeItem.category} category!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         } catch (e: Exception) {
-            Toast.makeText(
-                context,
-                e.message,
-                Toast.LENGTH_LONG
-            ).show()
+            viewModelScope.launch(Dispatchers.Main) {
+                Toast.makeText(
+                    context,
+                    e.message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
