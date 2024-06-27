@@ -52,139 +52,6 @@ import kotlinx.coroutines.withContext
 import java.util.Locale
 
 
-//@OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
-//@Composable
-//fun ShowRandomAnime(
-//    onNavigateToDetailScreen: (Int) -> Unit, modifier: Modifier = Modifier
-//) {
-//    val randomViewModel: RandomAnimeViewModel = hiltViewModel()
-//    val daoViewModel: DaoViewModel = hiltViewModel()
-//    val data by randomViewModel.animeDetails.collectAsStateWithLifecycle()
-//    var cardIsShown by randomViewModel.cardIsShown
-//    val context = LocalContext.current
-//    val swipeState = rememberSwipeableCardState()
-//
-//    Column(
-//        modifier
-//            .background(MaterialTheme.colorScheme.primary)
-//            .fillMaxSize(),
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center
-//    ) {
-//
-//        if (data != null) {
-//            AnimeCard(
-//                data = data,
-//                modifier = modifier
-//                    .width(340.dp)
-//                    .height(510.dp)
-//                    .swipableCard(
-//                        blockedDirections = listOf(Direction.Down),
-//                        state = swipeState, onSwiped = { direction ->
-//                            when (direction) {
-//                                Direction.Left -> {
-//                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
-//                                        randomViewModel.onTapRandomAnime()
-//                                        cardIsShown = false
-//                                    }
-//                                }
-//
-//                                Direction.Right -> {
-//                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
-//                                        daoViewModel.addToCategory(
-//                                            animeItem = AnimeItem(
-//                                                id = data?.id,
-//                                                animeName = data?.title ?: "N/A",
-//                                                animeImage = data?.images?.jpg?.large_image_url
-//                                                    ?: "",
-//                                                score = formatScoredBy(data?.score ?: 0.0f),
-//                                                scored_by = formatScoredBy(
-//                                                    data?.scored_by ?: 0.0f
-//                                                ),
-//                                                category = AnimeStatus.PLANNED.route,
-//                                                status = data?.status ?: "",
-//                                                rating = data?.rating ?: "",
-//                                                secondName = data?.title_japanese ?: "",
-//                                                airedFrom = data?.aired?.from ?: "N/A",
-//                                                type = data?.type ?: "N/A"
-//                                            )
-//                                        )
-//                                    }
-//                                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
-//                                        randomViewModel.onTapRandomAnime()
-//                                        cardIsShown = false
-//                                    }
-//                                }
-//
-//                                Direction.Up -> {
-//                                    onNavigateToDetailScreen(data?.id ?: 0)
-//
-//                                }
-//
-//                                else -> {}
-//                            }
-//                        },
-//                        onSwipeCancel = {
-//                            randomViewModel.viewModelScope.launch {
-//                                if (!isInternetAvailable(context)) {
-//                                    Toast
-//                                        .makeText(
-//                                            context,
-//                                            "No internet connection!",
-//                                            Toast.LENGTH_SHORT
-//                                        )
-//                                        .show()
-//                                }
-//                            }
-//                        }
-//                    ),
-//                onNavigateToDetailScreen = onNavigateToDetailScreen,
-//                context = context
-//            )
-//        } else {
-//            Box(modifier = Modifier
-//                .clip(CardDefaults.shape)
-//                .background(MaterialTheme.colorScheme.secondary)
-//                .combinedClickable(onDoubleClick = {
-//                    randomViewModel.viewModelScope.launch(Dispatchers.IO) {
-//                        if (isInternetAvailable(context)) {
-//                            randomViewModel.onTapRandomAnime()
-//                        }
-//                    }
-//                    randomViewModel.viewModelScope.launch {
-//                        if (!isInternetAvailable(context)) {
-//                            Toast
-//                                .makeText(
-//                                    context,
-//                                    "No internet connection!",
-//                                    Toast.LENGTH_SHORT
-//                                )
-//                                .show()
-//                        }
-//                    }
-//
-//                }) {}
-//                .padding(20.dp)) {
-//                Text(
-//                    text = "Tap 2 times",
-//                    fontSize = 30.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color.White,
-//                    fontFamily = evolventaBoldFamily
-//                )
-//            }
-//        }
-//        LaunchedEffect(data?.id) {
-//            withContext(Dispatchers.IO) {
-//                swipeState.offset.snapTo(Offset(0.0f, 1000.0f))
-//                swipeState.offset.animateTo(Offset(0.0f, 0.0f))
-//            }
-//        }
-//
-//    }
-//}
-
-
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
 @Composable
 fun ShowRandomAnime(
@@ -196,6 +63,23 @@ fun ShowRandomAnime(
     val context = LocalContext.current
     val swipeState = rememberSwipeableCardState()
     var checkIfCardIsGone by remember { mutableStateOf(false) }
+    var currentAnimeItem by remember {
+        mutableStateOf(
+            AnimeItem(
+                id = 0,
+                animeName = "N/A",
+                animeImage = "",
+                score = "",
+                scored_by = "",
+                category = AnimeStatus.PLANNED.route,
+                status = "",
+                rating = "",
+                secondName = "",
+                airedFrom = "",
+                type = ""
+            )
+        )
+    }
 
     Column(
         modifier
@@ -223,6 +107,26 @@ fun ShowRandomAnime(
                 // Handle success state for regular quotes
                 val quoteData =
                     (randomResponseState as CheckState.Success<AnimeRandomModel?>).data?.data
+                // Update currentId with the latest id
+
+                currentAnimeItem = AnimeItem(
+                    id = quoteData?.id ?: 0,
+                    animeName = quoteData?.title ?: "N/A",
+                    animeImage = quoteData?.images?.jpg?.image_url
+                        ?: "",
+                    score = formatScoredBy(quoteData?.score ?: 0.0f),
+                    scored_by = formatScoredBy(
+                        quoteData?.scored_by ?: 0.0f
+                    ),
+                    category = AnimeStatus.PLANNED.route,
+                    status = quoteData?.status ?: "",
+                    rating = quoteData?.rating ?: "",
+                    secondName = quoteData?.title_japanese ?: "",
+                    airedFrom = quoteData?.aired?.from ?: "N/A",
+                    type = quoteData?.type ?: "N/A"
+                )
+
+
                 // Render UI with quoteData
                 AnimeCard(
                     data = quoteData,
@@ -239,29 +143,16 @@ fun ShowRandomAnime(
 
                                     Direction.Right -> {
                                         daoViewModel.addToCategory(
-                                            animeItem = AnimeItem(
-                                                id = quoteData?.id,
-                                                animeName = quoteData?.title ?: "N/A",
-                                                animeImage = quoteData?.images?.jpg?.large_image_url
-                                                    ?: "",
-                                                score = formatScoredBy(quoteData?.score ?: 0.0f),
-                                                scored_by = formatScoredBy(
-                                                    quoteData?.scored_by ?: 0.0f
-                                                ),
-                                                category = AnimeStatus.PLANNED.route,
-                                                status = quoteData?.status ?: "",
-                                                rating = quoteData?.rating ?: "",
-                                                secondName = quoteData?.title_japanese ?: "",
-                                                airedFrom = quoteData?.aired?.from ?: "N/A",
-                                                type = quoteData?.type ?: "N/A"
-                                            )
+                                            currentAnimeItem
                                         )
 
                                         randomViewModel.fetchRandomAnime()
                                     }
 
                                     Direction.Up -> {
-                                        onNavigateToDetailScreen(quoteData?.id ?: 0)
+                                        onNavigateToDetailScreen(
+                                            currentAnimeItem.id ?: 0
+                                        )  // Use currentId
                                     }
 
                                     else -> {
@@ -283,24 +174,27 @@ fun ShowRandomAnime(
                     context = context
                 )
 
-                LaunchedEffect(quoteData?.id) {
+                LaunchedEffect(currentAnimeItem.id) {
                     withContext(Dispatchers.IO) {
                         swipeState.offset.snapTo(Offset(0.0f, 1000.0f))
                         swipeState.offset.animateTo(Offset(0.0f, 0.0f))
                     }
                 }
-                LaunchedEffect(checkIfCardIsGone) {
-                    if (checkIfCardIsGone) {
-                        withContext(Dispatchers.IO) {
-                            swipeState.offset.animateTo(Offset(0.0f, 0.0f))
-                            checkIfCardIsGone = false
-                        }
-                    }
-                }
+
+            }
+        }
+
+    }
+    LaunchedEffect(checkIfCardIsGone) {
+        if (checkIfCardIsGone) {
+            withContext(Dispatchers.IO) {
+                swipeState.offset.animateTo(Offset(0.0f, 0.0f))
+                checkIfCardIsGone = false
             }
         }
     }
 }
+
 
 @Composable
 fun CenteredCircularProgressIndicator() {

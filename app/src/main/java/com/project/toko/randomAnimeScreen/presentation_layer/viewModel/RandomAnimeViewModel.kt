@@ -66,14 +66,13 @@ class RandomAnimeViewModel @Inject constructor(
     private val randomRepository: RandomRepository
 ) :
     ViewModel() {
+    init {
+        fetchRandomAnime()
+    }
 
     private val _response: MutableStateFlow<CheckState<AnimeRandomModel?>> =
         MutableStateFlow(CheckState.Loading)
     val randomResponse: StateFlow<CheckState<AnimeRandomModel?>> = _response
-
-    init {
-        fetchRandomAnime()
-    }
 
     fun fetchRandomAnime() {
         viewModelScope.launch {
@@ -83,6 +82,8 @@ class RandomAnimeViewModel @Inject constructor(
                     _response.emit(CheckState.Success(response))
                 } catch (e: Exception) {
                     val errorMessage = "An error occurred. Please try again."
+                    _response.emit(CheckState.Error(errorMessage))
+
                     Toast
                         .makeText(
                             context,
@@ -90,7 +91,6 @@ class RandomAnimeViewModel @Inject constructor(
                             Toast.LENGTH_SHORT
                         )
                         .show()
-                    _response.emit(CheckState.Error(errorMessage))
                 }
             } else {
                 val connectionError = "No internet connection"
