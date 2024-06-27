@@ -43,11 +43,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -255,7 +258,9 @@ fun ShowMainScreen(
                 modifier = modifier
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                items(lastTenAnimeFromWatchingSection) { data ->
+                items(lastTenAnimeFromWatchingSection, key = {
+                    it.id ?: 0
+                }) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowSection(
                         data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
@@ -283,7 +288,7 @@ fun ShowMainScreen(
                 modifier = modifier
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                items(getTrendingAnime.data) { data ->
+                items(getTrendingAnime.data, key = { it.id }) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
                         data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
@@ -326,7 +331,7 @@ fun ShowMainScreen(
                 modifier = modifier
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                items(getJustTenAddedAnime) { data ->
+                items(getJustTenAddedAnime, key = { it.id ?: 0 }) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowSection(
                         data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
@@ -354,7 +359,7 @@ fun ShowMainScreen(
                 modifier = modifier
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                items(getTopAiring.data) { data ->
+                items(getTopAiring.data, key = { it.id }) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
                         data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
@@ -402,7 +407,7 @@ fun ShowMainScreen(
                 modifier = modifier
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                items(getTopUpcoming.data) { data ->
+                items(getTopUpcoming.data, key = { it.id }) { data ->
                     Spacer(modifier = modifier.width(20.dp))
                     ShowTopAnime(
                         data = data, onNavigateToDetailScreen = onNavigateToDetailScreen,
@@ -598,27 +603,6 @@ private fun AnimeCardBox(
                 color = MaterialTheme.colorScheme.inversePrimary
             )
         }
-//        Spacer(
-//            modifier = Modifier
-//                .height(20.dp)
-//                .fillMaxWidth()
-//                .background(Color.Yellow)
-//        )
-
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(bottom = 10.dp),
-//            horizontalArrangement = Arrangement.Start
-//        ) {
-//            Text(
-//                text = "Type: " + data.type,
-//                fontSize = 10.sp,
-//                textAlign = TextAlign.Left,
-//                modifier = Modifier.padding(start = 10.dp),
-//                color = MaterialTheme.colorScheme.inversePrimary
-//            )
-//        }
     }
 }
 
@@ -643,6 +627,7 @@ private fun formatScore(float: Float?): String {
         float.toString()
     }
 }
+
 
 @Stable
 @OptIn(ExperimentalFoundationApi::class)
@@ -669,8 +654,8 @@ private fun ShowSection(
 
     Card(
         modifier = modifier
-            .height(300.dp)
-            .width(180.dp)
+            .height(350.dp)
+            .width(200.dp)
             .shadow(20.dp)
             .then(if (isCardClicked) {
                 modifier.graphicsLayer {
@@ -706,7 +691,8 @@ private fun ShowSection(
                     painter = painter,
                     contentDescription = "Images for each Anime",
                     modifier = modifier
-                        .aspectRatio(9f / 11f)
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.69f)
                         .clip(RoundedCornerShape(10.dp)),
                     contentScale = ContentScale.FillBounds
                 )
@@ -755,8 +741,10 @@ private fun ShowSection(
                 }
 
             }
+//            Spacer(modifier = Modifier.height(200.dp).fillMaxWidth().background(Color.Green))
             Column(
-                modifier = modifier
+                Modifier
+                    .fillMaxWidth(), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = data.animeName,
@@ -806,6 +794,7 @@ private fun ShowSection(
     }
 
 }
+
 
 @Stable
 @Composable
@@ -858,8 +847,8 @@ private fun ShowTopAnime(
 
     Card(
         modifier = modifier
-            .height(300.dp)
-            .width(180.dp)
+            .height(350.dp)
+            .width(200.dp)
             .shadow(20.dp)
             .then(if (isCardClicked) {
                 modifier.graphicsLayer {
@@ -899,7 +888,8 @@ private fun ShowTopAnime(
                     painter = painter,
                     contentDescription = "Images for each Anime",
                     modifier = modifier
-                        .aspectRatio(9f / 11f)
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.69f)
                         .clip(RoundedCornerShape(10.dp)),
                     contentScale = ContentScale.FillBounds
                 )
@@ -963,7 +953,8 @@ private fun ShowTopAnime(
                 )
             }
             Column(
-                modifier = modifier
+                Modifier
+                    .fillMaxWidth(), verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = data.title,

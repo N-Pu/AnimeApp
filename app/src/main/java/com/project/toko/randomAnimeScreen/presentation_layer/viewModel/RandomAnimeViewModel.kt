@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import android.widget.Toast
 import androidx.lifecycle.viewModelScope
-import com.project.toko.core.domain.repository.MalApiService
 import com.project.toko.core.domain.util.connectionCheck.CommonFunction
 import com.project.toko.core.domain.util.stateCheck.CheckState
 import com.project.toko.randomAnimeScreen.data.model.AnimeRandomModel
