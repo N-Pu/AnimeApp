@@ -360,7 +360,7 @@ class DaoViewModel @Inject constructor(
             isSortedByScore = isSortedByScore,
             isSortedByUsers = isSortedByUsers,
             isAiredFrom = isAiredFrom,
-            type = type ?: ""
+            type = type
         )
     }
 

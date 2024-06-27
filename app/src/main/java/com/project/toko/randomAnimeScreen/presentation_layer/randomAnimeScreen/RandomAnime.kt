@@ -22,12 +22,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
@@ -35,8 +33,6 @@ import com.alexstyl.swipeablecard.Direction
 import com.alexstyl.swipeablecard.ExperimentalSwipeableCardApi
 import com.alexstyl.swipeablecard.rememberSwipeableCardState
 import com.alexstyl.swipeablecard.swipableCard
-import com.project.toko.core.domain.util.connectionCheck.CommonFunction
-import com.project.toko.core.domain.util.connectionCheck.isInternetAvailable
 import com.project.toko.core.domain.util.stateCheck.CheckState
 import com.project.toko.daoScreen.data.dao.AnimeItem
 import com.project.toko.randomAnimeScreen.presentation_layer.viewModel.RandomAnimeViewModel
@@ -47,12 +43,11 @@ import com.project.toko.daoScreen.data.model.AnimeStatus
 import com.project.toko.homeScreen.data.model.newAnimeSearchModel.AnimeSearchData
 import com.project.toko.randomAnimeScreen.data.model.AnimeRandomModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalSwipeableCardApi::class)
+@OptIn(ExperimentalSwipeableCardApi::class)
 @Composable
 fun ShowRandomAnime(
     onNavigateToDetailScreen: (Int) -> Unit, modifier: Modifier = Modifier
